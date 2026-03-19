@@ -66,7 +66,7 @@ def executarExpressao(dados):
             elif tipo == "RES":
                 n = token["valor"]
                 indice_atual = linha["linha"] - 1
-                indice_desejado = indice_atual - (n + 1)
+                indice_desejado = indice_atual - n
 
                 if indice_desejado < 0:
                     raise Exception(f"[Linha {linha['linha']}] RES referencia inválida")
