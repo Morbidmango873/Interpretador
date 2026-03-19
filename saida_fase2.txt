@@ -1,0 +1,22 @@
+[
+    {
+        "linha": 1,
+        "resultado": 5.14
+    },
+    {
+        "linha": 2,
+        "resultado": 0.25
+    },
+    {
+        "linha": 3,
+        "resultado": null
+    },
+    {
+        "linha": 4,
+        "resultado": 0.25
+    },
+    {
+        "linha": 5,
+        "resultado": 4.0
+    }
+]
