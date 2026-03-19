@@ -1,3 +1,4 @@
+# parte1.py
 import json
 
 OPERADORES = {"+", "-", "*", "/", "//", "%", "^"}
@@ -38,14 +39,12 @@ def estadoEspecial(tokens, i, linha):
     if tokens[i] != "(":
         erro("Erro interno em especial", linha)
 
-    # NOVO — padrão ( MEM ) — leitura de memória
     if i + 2 < len(tokens) and tokens[i + 2] == ")":
         nome = tokens[i + 1]
         if not nome.isupper():
             erro(f"Identificador inválido em leitura de memória: {nome}", linha)
         return {"tipo": "MEM", "valor": nome}, i + 3
 
-    # padrão ( V RES ) ou ( V MEM ) — 4 tokens
     if i + 3 >= len(tokens):
         erro("Expressão especial incompleta", linha)
 
@@ -68,11 +67,9 @@ def estadoEspecial(tokens, i, linha):
         erro("Expressão especial inválida", linha)
 
 
-def parseExpressao():
+# ALTERADO — recebe linhas como parâmetro em vez de ler o arquivo diretamente
+def parseExpressao(linhas):
     resultado = []
-
-    with open("entrada.txt", "r") as file:
-        linhas = [line.strip() for line in file.readlines()]
 
     for idx, linha in enumerate(linhas):
         tokens = linha.replace("(", " ( ").replace(")", " ) ").split()
@@ -86,7 +83,6 @@ def parseExpressao():
             token = tokens[i]
 
             if token == "(":
-                # ALTERADO — verifica ( MEM ) antes de ( V RES ) / ( V MEM )
                 if i + 2 < len(tokens) and tokens[i + 2] == ")":
                     t, i = estadoEspecial(tokens, i, idx + 1)
                     tokens_saida.append(t)
@@ -153,12 +149,3 @@ def parseExpressao():
         })
 
     return resultado
-
-
-if __name__ == "__main__":
-    resultado = parseExpressao()
-
-    with open("saida_fase1.txt", "w") as f:
-        json.dump(resultado, f, indent=4)
-
-    print("Fase 1 concluída com sucesso!")

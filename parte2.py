@@ -1,10 +1,5 @@
-import json
+# parte2.py
 from decimal import Decimal, ROUND_HALF_UP
-
-
-def carregarDados():
-    with open("saida_fase1.txt", "r") as f:
-        return json.load(f)
 
 
 def formatarResultado(valor):
@@ -88,7 +83,6 @@ def executarExpressao(dados):
 
         historico.append(resultado_final)
 
-        # ALTERADO — agora inclui os tokens da Fase 1 junto ao resultado
         resultados.append({
             "linha": linha["linha"],
             "tokens": linha["tokens"],
@@ -96,13 +90,3 @@ def executarExpressao(dados):
         })
 
     return resultados
-
-
-if __name__ == "__main__":
-    dados = carregarDados()
-    resultados = executarExpressao(dados)
-
-    with open("saida_fase2.txt", "w") as f:
-        json.dump(resultados, f, indent=4)
-
-    print("Fase 2 concluída com sucesso!")
