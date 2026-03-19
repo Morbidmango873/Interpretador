@@ -8,14 +8,14 @@
             },
             {
                 "tipo": "NUM",
-                "valor": "2.0"
+                "valor": "-2.0"
             },
             {
                 "tipo": "OP",
                 "valor": "+"
             }
         ],
-        "resultado": 5.14
+        "resultado": 1.14
     },
     {
         "linha": 2,
@@ -70,6 +70,6 @@
                 "valor": 1
             }
         ],
-        "resultado": 0.25
+        "resultado": null
     }
 ]

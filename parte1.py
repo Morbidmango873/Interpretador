@@ -115,7 +115,7 @@ def parseExpressao(linhas):
 
                 pilha.append("RESULT")
 
-            elif token.replace('.', '', 1).isdigit():
+            elif token.lstrip('-').replace('.', '', 1).isdigit() and token.count('-') <= 1:
                 t = estadoNumero(token, idx + 1)
                 tokens_saida.append(t)
                 pilha.append(t)
