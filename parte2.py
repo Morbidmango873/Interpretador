@@ -48,7 +48,6 @@ def executarExpressao(dados):
 
             elif tipo == "MEM":
                 nome = token["valor"]
-                # ALTERADO — retorna None se não inicializado, sem lançar exceção
                 valor = memoria.get(nome, None)
                 pilha.append(valor)
 
@@ -59,7 +58,6 @@ def executarExpressao(dados):
                 b = pilha.pop()
                 a = pilha.pop()
 
-                # ALTERADO — propaga None se algum operando for None
                 if a is None or b is None:
                     pilha.append(None)
                 else:
@@ -90,8 +88,10 @@ def executarExpressao(dados):
 
         historico.append(resultado_final)
 
+        # ALTERADO — agora inclui os tokens da Fase 1 junto ao resultado
         resultados.append({
             "linha": linha["linha"],
+            "tokens": linha["tokens"],
             "resultado": formatarResultado(resultado_final)
         })
 

@@ -1,22 +1,75 @@
 [
     {
         "linha": 1,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "3.14"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "2.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "+"
+            }
+        ],
         "resultado": 5.14
     },
     {
         "linha": 2,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "1.5"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "2.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "*"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "3.0"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "4.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "*"
+            },
+            {
+                "tipo": "OP",
+                "valor": "/"
+            }
+        ],
         "resultado": 0.25
     },
     {
         "linha": 3,
+        "tokens": [
+            {
+                "tipo": "STORE",
+                "mem": "MEM",
+                "valor": "5.0"
+            }
+        ],
         "resultado": null
     },
     {
         "linha": 4,
+        "tokens": [
+            {
+                "tipo": "RES",
+                "valor": 1
+            }
+        ],
         "resultado": 0.25
-    },
-    {
-        "linha": 5,
-        "resultado": 4.0
     }
 ]
