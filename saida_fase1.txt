@@ -4,17 +4,72 @@
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": 9.0
+                "valor": 3.14
+            },
+            {
+                "tipo": "NUM",
+                "valor": 2.0
+            },
+            {
+                "tipo": "OP",
+                "valor": "+",
+                "esquerdo": 3.14,
+                "direito": 2.0
+            },
+            {
+                "tipo": "SUBEXP",
+                "valor": "(3.14 + 2.0)"
+            }
+        ]
+    },
+    {
+        "linha": 2,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": 1.5
+            },
+            {
+                "tipo": "NUM",
+                "valor": 2.0
+            },
+            {
+                "tipo": "OP",
+                "valor": "*",
+                "esquerdo": 1.5,
+                "direito": 2.0
+            },
+            {
+                "tipo": "SUBEXP",
+                "valor": "(1.5 * 2.0)"
             },
             {
                 "tipo": "NUM",
                 "valor": 3.0
             },
             {
+                "tipo": "NUM",
+                "valor": 4.0
+            },
+            {
+                "tipo": "OP",
+                "valor": "*",
+                "esquerdo": 3.0,
+                "direito": 4.0
+            },
+            {
+                "tipo": "SUBEXP",
+                "valor": "(3.0 * 4.0)"
+            },
+            {
                 "tipo": "OP",
                 "valor": "/",
-                "esquerdo": 9.0,
-                "direito": 3.0
+                "esquerdo": "(1.5 * 2.0)",
+                "direito": "(3.0 * 4.0)"
+            },
+            {
+                "tipo": "SUBEXP",
+                "valor": "((1.5 * 2.0) / (3.0 * 4.0))"
             }
         ]
     }
