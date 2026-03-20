@@ -67,6 +67,7 @@ def parseExpressao(linha): #Inicio
 
 import json
 
+
 # ESTADO GLOBAL
 index        = 0
 linha        = ""
@@ -266,7 +267,7 @@ def estadoFinal():
         tokens_limpos = []
         for t in entrada["tokens"]:
             if t["tipo"] == "NUM":
-                tokens_limpos.append({"tipo": "NUM", "valor": t["valor"]})
+                tokens_limpos.append({"tipo": "NUM", "valor": str(t["valor"])})
             elif t["tipo"] == "OP":
                 tokens_limpos.append({"tipo": "OP", "valor": t["valor"]})
         saida.append({"linha": entrada["linha"], "tokens": tokens_limpos})
