@@ -64,9 +64,7 @@ def parseExpressao(linha): #Inicio
 
 '''
 
-
 import json
-
 
 # ESTADO GLOBAL
 index        = 0
@@ -90,7 +88,7 @@ def parseExpressao(linhas):
         estadoInicial()
 
         if pilha:
-            raise ValueError(f"Linha {num}: {len(pilha)} parêntese(s) não fechado(s) — linha: {linha!r}")
+            raise ValueError(f"Linha {num}: {len(pilha)} parêntese(s) não fechado(s)")
 
         resultado.append({"linha": num, "tokens": list(tokens)})
 
@@ -130,7 +128,7 @@ def estadoInicial():
         index += 1
         return estadoFechaParentese()
 
-    raise ValueError(f"[pos {index}] Caractere inesperado: {ch!r} — linha: {linha!r}")
+    raise ValueError(f"[pos {index}] Caractere inesperado: {ch!r}")
 
 
 # ESTADO NÚMERO
@@ -138,7 +136,9 @@ def estadoNumero(buffer):
     global index
 
     if index >= len(linha):
-        _salvarNumero(buffer)
+        if buffer.endswith('.'):
+            raise ValueError(f"[pos {index}] Número termina com ponto: {buffer!r}")
+        tokens.append({"tipo": "NUM", "valor": str(float(buffer))})
         return
 
     ch = linha[index]
@@ -149,31 +149,39 @@ def estadoNumero(buffer):
 
     if ch == '.':
         if '.' in buffer:
-            raise ValueError(f"[pos {index}] Número com mais de um ponto decimal: {buffer!r} — linha: {linha!r}")
+            raise ValueError(f"[pos {index}] Número com mais de um ponto decimal: {buffer!r}")
         index += 1
         return estadoNumero(buffer + ch)
 
     if ch == ' ':
-        _salvarNumero(buffer)
+        if buffer.endswith('.'):
+            raise ValueError(f"[pos {index}] Número termina com ponto: {buffer!r}")
+        tokens.append({"tipo": "NUM", "valor": str(float(buffer))})
         index += 1
         return estadoInicial()
 
     if ch == '/' and index + 1 < len(linha) and linha[index + 1] == '/':
-        _salvarNumero(buffer)
+        if buffer.endswith('.'):
+            raise ValueError(f"[pos {index}] Número termina com ponto: {buffer!r}")
+        tokens.append({"tipo": "NUM", "valor": str(float(buffer))})
         index += 2
         return estadoOperador('//')
 
     if ch in ('+', '-', '*', '/', '%', '^'):
-        _salvarNumero(buffer)
+        if buffer.endswith('.'):
+            raise ValueError(f"[pos {index}] Número termina com ponto: {buffer!r}")
+        tokens.append({"tipo": "NUM", "valor": str(float(buffer))})
         index += 1
         return estadoOperador(ch)
 
     if ch == ')':
-        _salvarNumero(buffer)
+        if buffer.endswith('.'):
+            raise ValueError(f"[pos {index}] Número termina com ponto: {buffer!r}")
+        tokens.append({"tipo": "NUM", "valor": str(float(buffer))})
         index += 1
         return estadoFechaParentese()
 
-    raise ValueError(f"[pos {index}] Caractere inesperado após número {buffer!r}: {ch!r} — linha: {linha!r}")
+    raise ValueError(f"[pos {index}] Caractere inesperado após número {buffer!r}: {ch!r}")
 
 
 # ESTADO OPERADOR
@@ -196,7 +204,7 @@ def estadoOperador(op):
     if len(operandos) < 2:
         raise ValueError(
             f"[pos {index}] Operador {op!r} exige 2 operandos — "
-            f"encontrado(s): {len(operandos)} — linha: {linha!r}"
+            f"encontrado(s): {len(operandos)}"
         )
 
     esq = operandos[-2]["valor"]
@@ -218,14 +226,29 @@ def estadoOperador(op):
         index += 1
         return estadoFechaParentese()
 
-    raise ValueError(f"[pos {index}] Caractere inesperado após operador {op!r}: {ch!r} — linha: {linha!r}")
+    raise ValueError(f"[pos {index}] Caractere inesperado após operador {op!r}: {ch!r}")
 
 
 # ESTADO ABRE PARÊNTESE
 def estadoAbreParentese():
     global tokens
 
-    pilha.append(list(tokens))
+    # Separa o que já está resolvido no pai (tokens fechados) dos operandos
+    # pendentes que ainda aguardam este grupo para formar um par com operador.
+    # Os pendentes são os NUM/SUBEXP que ainda não foram consumidos por nenhum OP.
+    valores_consumidos = set()
+    for t in tokens:
+        if t["tipo"] == "OP":
+            valores_consumidos.add(str(t["esquerdo"]))
+            valores_consumidos.add(str(t["direito"]))
+
+    fechados  = [t for t in tokens if t["tipo"] in ("OP",) or
+                 (t["tipo"] in ("NUM", "SUBEXP") and str(t["valor"]) in valores_consumidos)]
+    pendentes = [t for t in tokens if t["tipo"] in ("NUM", "SUBEXP") and
+                 str(t["valor"]) not in valores_consumidos]
+
+    # empilha: tokens fechados + pendentes separados (pendentes vão APÓS o grupo)
+    pilha.append({"fechados": fechados, "pendentes": pendentes})
     tokens = []
 
     return estadoInicial()
@@ -236,22 +259,27 @@ def estadoFechaParentese():
     global tokens
 
     if not pilha:
-        raise ValueError(f"[pos {index}] ')' sem '(' correspondente — linha: {linha!r}")
+        raise ValueError(f"[pos {index}] ')' sem '(' correspondente")
 
     ops_internos = [t for t in tokens if t["tipo"] == "OP"]
     if len(ops_internos) == 0:
-        raise ValueError(f"[pos {index}] Parêntese sem operador dentro — linha: {linha!r}")
+        raise ValueError(f"[pos {index}] Parêntese sem operador dentro")
 
     tokens_internos = list(tokens)
 
-    tokens = pilha.pop()
+    ctx = pilha.pop()
 
-    # anexa apenas NUM e OP internos — SUBEXP não vai para o JSON final
+    # reconstrói o contexto do pai na ordem correta de execução:
+    # 1. tokens já fechados do pai (OPs e operandos já consumidos)
+    # 2. tokens do grupo interno (ordem de execução interna)
+    # 3. operandos pendentes do pai que aguardavam este grupo
+    tokens = ctx["fechados"]
     for t in tokens_internos:
         if t["tipo"] in ("NUM", "OP"):
             tokens.append(t)
+    tokens.extend(ctx["pendentes"])
 
-    # SUBEXP permanece interno: usado só para rastrear operandos consumidos no pai
+    # SUBEXP representa o resultado deste grupo para o estadoOperador do pai
     ultimo_op = ops_internos[-1]
     subexp_val = f"({ultimo_op['esquerdo']} {ultimo_op['valor']} {ultimo_op['direito']})"
     tokens.append({"tipo": "SUBEXP", "valor": subexp_val})
@@ -272,10 +300,7 @@ def estadoFinal():
                 tokens_limpos.append({"tipo": "OP", "valor": t["valor"]})
         saida.append({"linha": entrada["linha"], "tokens": tokens_limpos})
 
-    return saida
+    with open("saida_fase1.txt", "w", encoding="utf-8") as f:
+        json.dump(saida, f, indent=4, ensure_ascii=False)
 
-# HELPER — valida e salva token NUM
-def _salvarNumero(buffer):
-    if buffer.endswith('.'):
-        raise ValueError(f"[pos {index}] Número termina com ponto: {buffer!r} — linha: {linha!r}")
-    tokens.append({"tipo": "NUM", "valor": float(buffer)})
+    return saida
