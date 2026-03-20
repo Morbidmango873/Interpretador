@@ -1,15 +1,83 @@
+'''
+
+
+#Variaveis globais
+# Varia global indes atual.
+# Contado de operandos
+# Contador de parenteses
+# Buffer operandos
+# pilha de operandos
+
+KEYWORD = ['RES']
+
+
+def estadoNumero(linha): # Estado para lidar com Números
+    # Damos trativa ao numero verificando se após ele tem um ponto caso tenha puxamos os número seguintes até um espaço em branco caso tenha outro . retorna erro
+    # Caso o número seja correto adicionamos em nosso buffer.
+
+    # Verifica se a linha no proximo index = a um numero
+    # Verifica se o linha no proximo index = a um operador
+    # Verifica se a linha no proximo index = a um (
+    # Verifica se a linha no proximo index = estadoEspecial(Uma letra maiuscula)
+
+
+def estadoParenteses(linha): # Estado para lidar com parêntese
+    #verifica se é um parenteses abrindo ou fechando
+    # caso seja abrindo armazena o contador de operandos em um buffer que é uma pilha para podermos lidar com paretentese encadeados e zera o contato atual
+    # adicionam o parenteses abrindo a pilha de parenteses usaremos para verificar pariedade e ordem correta
+    # caso seja um fechando pega o buffer e adiciona o ultimo ao contador global 
+
+    # Verifica se a linha no proximo index = a um numero
+    # Verifica se o linha no proximo index = a um operador
+    # Verifica se a linha no proximo index = a um (
+    # Verifica se a linha no proximo index = estadoEspecial(Uma letra maiuscula)
+    
+
+def estadoOperador(linha): #Estado para lidar com Operadores
+
+    # Verifica se o operador é valido, usando nossa lista de operadores [+, -, *, /, //, %, ^]
+    # verifica se o contador global de operando = 2 caso seja salva os 2 ultimos e operadorandos e o operador na ordem coreta
+    # se for menor que retorna erro
+     
+    # Verifica se a linha no proximo index = a um numero
+    # Verifica se o linha no proximo index = a um operador
+    # Verifica se a linha no proximo index = a um (
+    # Verifica se a linha no proximo index = estadoEspecial(Uma letra maiuscula)
+
+def estadoEspeciais(linha): #Estado para lidar com MEM e RES
+
+    # caso receba o res iremos armazenar o valor anterior a ele o o res então mandar para o final
+    # RES é responsavel por quando executado receber o historico e pegar o index dele - o valor passado e retornar o resultado
+    # MEM ou Qualquer conjunto ou LEtra maiuscula sozinha iremos salvar o valor passado anterior ou seja o ultimo na pilha de operando e salvar na memoria com aquele nome ou seja verificar tudo até achar um espaço ou algo que não seja um letra.
+    # Caso não tenha sido passado nenhum valor ou seja só o conjunto vindo do estado inicial ele será salvo com 0.0
+
+def parseExpressao(linha): #Inicio 
+    print(linha)
+    #Verifica se a linha no index 0 = a um numero
+    #Verifica se o linha no index 0 = a um operador
+    #Verifica se a linha no index 0 = a um (
+    #Verifica se a linha no index 0 = estadoEspecial(Uma letra maiuscula)
+
+
+
+# Especificações não posso usar REGEX. e tem que se
+
+'''
+
+
+
 import json
 
 # ESTADO GLOBAL
-index  = 0
-linha  = ""
-tokens = []
+index     = 0
+linha     = ""
+tokens    = []
+resultado = []   # acumula todas as linhas para o estado final
 
 
 # ENTRADA — chamada pela parte4 passando a lista de linhas
 def parseExpressao(linhas):
-    global index, linha, tokens
-
+    global index, linha, tokens, resultado
     resultado = []
 
     for num, raw in enumerate(linhas, 1):
@@ -21,7 +89,7 @@ def parseExpressao(linhas):
 
         resultado.append({"linha": num, "tokens": list(tokens)})
 
-    return resultado
+    return estadoFinal()
 
 
 # ESTADO INICIAL — coringa, decide para onde ir
@@ -40,6 +108,10 @@ def estadoInicial():
     if ch.isdigit():
         index += 1
         return estadoNumero(ch)
+
+    if ch in ('+', '-', '*', '/', '%', '^'):
+        index += 1
+        return estadoOperador(ch)
 
     raise ValueError(f"[pos {index}] Caractere inesperado: {ch!r} — linha: {linha!r}")
 
@@ -69,7 +141,45 @@ def estadoNumero(buffer):
         index += 1
         return estadoInicial()
 
+    if ch in ('+', '-', '*', '/', '%', '^'):
+        _salvarNumero(buffer)
+        index += 1
+        return estadoOperador(ch)
+
     raise ValueError(f"[pos {index}] Caractere inesperado após número {buffer!r}: {ch!r} — linha: {linha!r}")
+
+
+# ESTADO OPERADOR
+def estadoOperador(op):
+    global index
+    nums = [t for t in tokens if t["tipo"] == "NUM"]
+
+    if len(nums) < 2:
+        raise ValueError(f"[pos {index}] Operador {op!r} exige 2 números — encontrado(s): {len(nums)} — linha: {linha!r}")
+
+    esq = nums[-2]["valor"]
+    dir = nums[-1]["valor"]
+
+    tokens.append({"tipo": "OP", "valor": op, "esquerdo": esq, "direito": dir})
+
+    if index >= len(linha):
+        return
+
+    ch = linha[index]
+
+    if ch == ' ':
+        index += 1
+        return estadoInicial()
+
+    raise ValueError(f"[pos {index}] Caractere inesperado após operador {op!r}: {ch!r} — linha: {linha!r}")
+
+
+# ESTADO FINAL — gera o JSON com todas as linhas processadas
+def estadoFinal():
+    with open("saida_fase1.txt", "w", encoding="utf-8") as f:
+        json.dump(resultado, f, indent=4, ensure_ascii=False)
+
+    return resultado
 
 
 # HELPER — valida e salva token NUM
