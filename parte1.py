@@ -19,6 +19,7 @@ def estadoNumero(linha): # Estado para lidar com Números
     # Verifica se o linha no proximo index = a um operador
     # Verifica se a linha no proximo index = a um (
     # Verifica se a linha no proximo index = estadoEspecial(Uma letra maiuscula)
+    # trativa de erros do . e outros
 
 
 def estadoParenteses(linha): # Estado para lidar com parêntese
@@ -63,7 +64,6 @@ def parseExpressao(linha): #Inicio
 # Especificações não posso usar REGEX. e tem que se
 
 '''
-
 import json
 
 # ESTADO GLOBAL
@@ -128,6 +128,10 @@ def estadoInicial():
         index += 1
         return estadoFechaParentese()
 
+    if ch.isupper():
+        index += 1
+        return estadoRES(ch)
+
     raise ValueError(f"[pos {index}] Caractere inesperado: {ch!r}")
 
 
@@ -188,8 +192,6 @@ def estadoNumero(buffer):
 def estadoOperador(op):
     global index
 
-    # operandos disponíveis: NUM e SUBEXP que ainda não foram consumidos
-    # Um operando é "consumido" se seu valor aparece como esquerdo/direito de algum OP.
     valores_consumidos = set()
     for t in tokens:
         if t["tipo"] == "OP":
@@ -210,7 +212,6 @@ def estadoOperador(op):
     esq = operandos[-2]["valor"]
     dir = operandos[-1]["valor"]
 
-    # salva apenas o operador — sem esquerdo/direito no JSON final
     tokens.append({"tipo": "OP", "valor": op, "esquerdo": esq, "direito": dir})
 
     if index >= len(linha):
@@ -229,13 +230,98 @@ def estadoOperador(op):
     raise ValueError(f"[pos {index}] Caractere inesperado após operador {op!r}: {ch!r}")
 
 
+# ESTADO RES — lê 'R','E','S' letra a letra
+# Se em qualquer ponto vier letra diferente da esperada → passa para estadoMEM
+# Se confirmar 'RES' completo → valida índice e encerra
+def estadoRES(buffer):
+    global index
+
+    # primeira letra não é 'R' — nunca será RES, vai direto pro MEM
+    if not buffer.startswith('R'):
+        return estadoMEM(buffer)
+
+    # ainda esperando completar 'RE'
+    if buffer == 'R':
+        if index < len(linha) and linha[index] == 'E':
+            index += 1
+            return estadoRES('RE')
+        # não é 'E' — não é RES, passa para MEM continuar acumulando
+        return estadoMEM('R')
+
+    # ainda esperando completar 'RES'
+    if buffer == 'RE':
+        if index < len(linha) and linha[index] == 'S':
+            index += 1
+            return estadoRES('RES')
+        # não é 'S' — não é RES, passa para MEM continuar acumulando
+        return estadoMEM('RE')
+
+    # buffer == 'RES' — keyword confirmada
+    # verifica se tem letra colada (ex: RESX → é nome MEM, não keyword)
+    if index < len(linha) and linha[index].isupper():
+        return estadoMEM('RES')
+
+    if index < len(linha) and linha[index].islower():
+        raise ValueError(f"[pos {index}] Nome inválido — letras minúsculas não permitidas")
+
+    # RES válido — valida que existe NUM antes (o índice do histórico)
+    nums = [t for t in tokens if t["tipo"] == "NUM"]
+    if not nums:
+        raise ValueError(f"[pos {index}] RES sem índice numérico precedente")
+
+    tokens.append({"tipo": "RES"})
+    return estadoFechaEspecial()
+
+
+# ESTADO MEM — acumula letras maiúsculas recursivamente até acabar o nome
+def estadoMEM(buffer):
+    global index
+
+    # continua acumulando enquanto vier letra maiúscula
+    if index < len(linha) and linha[index].isupper():
+        ch = linha[index]
+        index += 1
+        return estadoMEM(buffer + ch)
+
+    # letra minúscula colada é inválida
+    if index < len(linha) and linha[index].islower():
+        raise ValueError(f"[pos {index}] Nome inválido {buffer!r} — letras minúsculas não permitidas")
+
+    # nome completo — pega último NUM como valor ou usa 0.0
+    nums = [t for t in tokens if t["tipo"] == "NUM"]
+    valor = nums[-1]["valor"] if nums else "0.0"
+
+    tokens.append({"tipo": "MEM", "nome": buffer, "valor": valor})
+    return estadoFechaEspecial()
+
+
+# ESTADO FECHA ESPECIAL — drena espaços e ')' após RES ou MEM e encerra
+def estadoFechaEspecial():
+    global index
+
+    if index >= len(linha):
+        return
+
+    ch = linha[index]
+
+    if ch == ' ':
+        index += 1
+        return estadoFechaEspecial()
+
+    if ch == ')':
+        if not pilha:
+            raise ValueError(f"[pos {index}] ')' sem '(' correspondente")
+        pilha.pop()
+        index += 1
+        return estadoFechaEspecial()
+
+    raise ValueError(f"[pos {index}] Token especial deve ser o último da linha")
+
+
 # ESTADO ABRE PARÊNTESE
 def estadoAbreParentese():
     global tokens
 
-    # Separa o que já está resolvido no pai (tokens fechados) dos operandos
-    # pendentes que ainda aguardam este grupo para formar um par com operador.
-    # Os pendentes são os NUM/SUBEXP que ainda não foram consumidos por nenhum OP.
     valores_consumidos = set()
     for t in tokens:
         if t["tipo"] == "OP":
@@ -247,7 +333,6 @@ def estadoAbreParentese():
     pendentes = [t for t in tokens if t["tipo"] in ("NUM", "SUBEXP") and
                  str(t["valor"]) not in valores_consumidos]
 
-    # empilha: tokens fechados + pendentes separados (pendentes vão APÓS o grupo)
     pilha.append({"fechados": fechados, "pendentes": pendentes})
     tokens = []
 
@@ -266,20 +351,14 @@ def estadoFechaParentese():
         raise ValueError(f"[pos {index}] Parêntese sem operador dentro")
 
     tokens_internos = list(tokens)
-
     ctx = pilha.pop()
 
-    # reconstrói o contexto do pai na ordem correta de execução:
-    # 1. tokens já fechados do pai (OPs e operandos já consumidos)
-    # 2. tokens do grupo interno (ordem de execução interna)
-    # 3. operandos pendentes do pai que aguardavam este grupo
     tokens = ctx["fechados"]
     for t in tokens_internos:
         if t["tipo"] in ("NUM", "OP"):
             tokens.append(t)
     tokens.extend(ctx["pendentes"])
 
-    # SUBEXP representa o resultado deste grupo para o estadoOperador do pai
     ultimo_op = ops_internos[-1]
     subexp_val = f"({ultimo_op['esquerdo']} {ultimo_op['valor']} {ultimo_op['direito']})"
     tokens.append({"tipo": "SUBEXP", "valor": subexp_val})
@@ -287,9 +366,8 @@ def estadoFechaParentese():
     return estadoInicial()
 
 
-# ESTADO FINAL — retorna o resultado para a parte4
+# ESTADO FINAL — retorna resultado para a parte4 e grava JSON
 def estadoFinal():
-    # filtra SUBEXP e esquerdo/direito do JSON entregue à parte4
     saida = []
     for entrada in resultado:
         tokens_limpos = []
@@ -298,6 +376,10 @@ def estadoFinal():
                 tokens_limpos.append({"tipo": "NUM", "valor": str(t["valor"])})
             elif t["tipo"] == "OP":
                 tokens_limpos.append({"tipo": "OP", "valor": t["valor"]})
+            elif t["tipo"] == "RES":
+                tokens_limpos.append({"tipo": "RES"})
+            elif t["tipo"] == "MEM":
+                tokens_limpos.append({"tipo": "MEM", "nome": t["nome"], "valor": t["valor"]})
         saida.append({"linha": entrada["linha"], "tokens": tokens_limpos})
 
     with open("saida_fase1.txt", "w", encoding="utf-8") as f:
