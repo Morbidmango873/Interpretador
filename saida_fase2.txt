@@ -15,7 +15,7 @@
                 "valor": "+"
             }
         ],
-        "resultado": 1.14
+        "resultado": 1.1400000000000001
     },
     {
         "linha": 2,

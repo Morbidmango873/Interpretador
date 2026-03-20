@@ -9,9 +9,15 @@ def erro(msg, linha):
     raise Exception(f"[Linha {linha}] {msg}")
 
 
+
+
+
 def estadoNumero(token, linha):
     float(token)
     return {"tipo": "NUM", "valor": token}
+
+
+
 
 
 def estadoOperador(token, pilha, linha):
@@ -28,11 +34,17 @@ def estadoOperador(token, pilha, linha):
     return {"tipo": "OP", "valor": token}
 
 
+
+
+
 def estadoIdentificador(token, linha):
     if token.isupper():
         return {"tipo": "MEM", "valor": token}
     else:
         erro(f"Identificador inválido: {token}", linha)
+
+
+
 
 
 def estadoEspecial(tokens, i, linha):
@@ -67,7 +79,9 @@ def estadoEspecial(tokens, i, linha):
         erro("Expressão especial inválida", linha)
 
 
-# ALTERADO — recebe linhas como parâmetro em vez de ler o arquivo diretamente
+
+
+
 def parseExpressao(linhas):
     resultado = []
 

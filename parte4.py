@@ -2,8 +2,9 @@
 import json, sys
 from parte1 import parseExpressao
 from parte2 import executarExpressao
+from teste import testar_lexer
 
-
+testar_lexer()
 # -------------------------
 # LEITURA DO ARQUIVO
 # -------------------------

@@ -2,10 +2,13 @@
 from decimal import Decimal, ROUND_HALF_UP
 
 
+import struct
+
 def formatarResultado(valor):
     if valor is None:
         return None
-    return float(Decimal(valor).quantize(Decimal("0.00"), rounding=ROUND_HALF_UP))
+    packed = struct.pack("d", float(valor))
+    return struct.unpack("d", packed)[0]
 
 
 def aplicarOperador(a, b, op):
