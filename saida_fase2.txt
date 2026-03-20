@@ -8,14 +8,14 @@
             },
             {
                 "tipo": "NUM",
-                "valor": "2.0"
+                "valor": "5.0"
             },
             {
                 "tipo": "OP",
                 "valor": "+"
             }
         ],
-        "resultado": 5.140000000000001
+        "resultado": 8.14
     },
     {
         "linha": 2,
@@ -58,5 +58,33 @@
             }
         ],
         "resultado": 0.3333333333333333
+    },
+    {
+        "linha": 3,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "10.5"
+            },
+            {
+                "tipo": "MEM",
+                "nome": "CONTADOR",
+                "valor": "10.5"
+            }
+        ],
+        "resultado": 10.5
+    },
+    {
+        "linha": 4,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "2.0"
+            },
+            {
+                "tipo": "RES"
+            }
+        ],
+        "resultado": 8.14
     }
 ]

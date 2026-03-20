@@ -8,7 +8,7 @@
             },
             {
                 "tipo": "NUM",
-                "valor": "2.0"
+                "valor": "5.0"
             },
             {
                 "tipo": "OP",

@@ -1,4 +1,3 @@
-# parte4.py
 import json, sys
 from parte1 import parseExpressao
 from parte2 import executarExpressao
@@ -13,7 +12,6 @@ def lerArquivo(caminho):
     with open(caminho, "r", encoding="utf-8") as f:
         linhas = f.readlines()
 
-
     linhas_limpas = []
     for linha in linhas:
         limpa = linha.strip()
@@ -26,9 +24,8 @@ def lerArquivo(caminho):
     return linhas_limpas
 
 
-
 def exibirResultados(resultados):
-    
+
     print("\n" + "=" * 50)
     print(f"{'RESULTADOS':^50}")
     print("=" * 50)
@@ -38,7 +35,6 @@ def exibirResultados(resultados):
         tokens    = entrada["tokens"]
         resultado = entrada["resultado"]
 
-        # monta representação legível dos tokens
         partes = []
         for t in tokens:
             if t["tipo"] == "NUM":
@@ -46,15 +42,12 @@ def exibirResultados(resultados):
             elif t["tipo"] == "OP":
                 partes.append(t["valor"])
             elif t["tipo"] == "MEM":
-                partes.append(f"({t['valor']})")
-            elif t["tipo"] == "STORE":
-                partes.append(f"({t['valor']} {t['mem']})")
+                partes.append(f"({t['nome']} = {t['valor']})")
             elif t["tipo"] == "RES":
-                partes.append(f"({t['valor']} RES)")
+                partes.append("RES")
 
         expressao = " ".join(partes)
 
-        # formata resultado: uma casa decimal para reais, vazio para None
         if resultado is None:
             resultado_str = "(vazio)"
         elif resultado == int(resultado):
@@ -75,9 +68,8 @@ def salvarResultados(resultados, caminho="saida_fase2.txt"):
     print(f"Saída salva em '{caminho}'.")
 
 
-
 def main():
-    
+
     caminho = sys.argv[1]
 
     print(f"Lendo arquivo: {caminho}")

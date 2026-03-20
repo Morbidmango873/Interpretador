@@ -1,4 +1,3 @@
-# parte2.py
 import struct
 
 
@@ -29,24 +28,20 @@ def aplicarOperador(a, b, op):
 
 
 def executarExpressao(dados):
-    memoria  = {}
+    memoria   = {}
     historico = []
     resultados = []
 
     for linha in dados:
-        pilha = []
-        tem_store = False  # NOVO — flag para linhas que são apenas STORE
+        pilha    = []
+        eh_store = False
+        eh_res   = False
 
         for token in linha["tokens"]:
             tipo = token["tipo"]
 
             if tipo == "NUM":
                 pilha.append(float(token["valor"]))
-
-            elif tipo == "MEM":
-                nome  = token["valor"]
-                valor = memoria.get(nome, None)
-                pilha.append(valor)
 
             elif tipo == "OP":
                 if len(pilha) < 2:
@@ -58,18 +53,18 @@ def executarExpressao(dados):
                 else:
                     pilha.append(aplicarOperador(a, b, token["valor"]))
 
-            elif tipo == "STORE":
-                # armazena na memória
-                memoria[token["mem"]] = float(token["valor"])
-                tem_store = True  # NOVO — marca que essa linha é um STORE
+            elif tipo == "MEM":
+                # salva na memória usando 'nome' como chave e 'valor' como conteúdo
+                memoria[token["nome"]] = float(token["valor"])
+                eh_store = True
 
             elif tipo == "RES":
-                n = token["valor"]
+                # o índice é o último NUM empilhado (já está na pilha)
+                if not pilha:
+                    raise Exception(f"[Linha {linha['linha']}] RES sem índice na pilha")
+                n = int(pilha.pop())
 
-                # ALTERADO — usa len(historico) como base, não indice_atual
-                # historico só tem as linhas já processadas antes desta
                 indice_desejado = len(historico) - n
-
                 if indice_desejado < 0:
                     raise Exception(
                         f"[Linha {linha['linha']}] RES({n}) inválido: "
@@ -77,7 +72,6 @@ def executarExpressao(dados):
                     )
 
                 valor = historico[indice_desejado]
-
                 if valor is None:
                     raise Exception(
                         f"[Linha {linha['linha']}] RES({n}) aponta para "
@@ -85,28 +79,23 @@ def executarExpressao(dados):
                     )
 
                 pilha.append(valor)
+                eh_res = True
 
-            elif tipo in ("LPAREN", "RPAREN"):
-                pass  # agrupamento — ignorado na execução
-
-        # ── resultado final da linha ──────────────────────────
+        # resultado final da linha
         if len(pilha) == 1:
             resultado_final = pilha.pop()
         elif len(pilha) == 0:
             resultado_final = None
         else:
-            raise Exception(f"[Linha {linha['linha']}] Pilha inválida ao final")
+            raise Exception(f"[Linha {linha['linha']}] Pilha inválida ao final: {pilha}")
 
-        # ALTERADO — linhas STORE não entram no histórico com None
-        # elas simplesmente não produzem resultado numérico
-        if not tem_store:
+        # MEM puro não entra no histórico (não produz resultado numérico)
+        if not eh_store:
             historico.append(resultado_final)
-        # se for STORE puro, não adiciona nada ao histórico
-        # para que os índices do RES não sejam deslocados
 
         resultados.append({
-            "linha": linha["linha"],
-            "tokens": linha["tokens"],
+            "linha"    : linha["linha"],
+            "tokens"   : linha["tokens"],
             "resultado": formatarResultado(resultado_final)
         })
 
