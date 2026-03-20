@@ -1,52 +1,145 @@
+'''
 
+
+#Variaveis globais
+# Varia global indes atual.
+# Contado de operandos
+# Contador de parenteses
+# Buffer operandos
+# pilha de operandos
+
+KEYWORD = ['RES']
+
+
+def estadoNumero(linha): # Estado para lidar com Números
+    # Damos trativa ao numero verificando se após ele tem um ponto caso tenha puxamos os número seguintes até um espaço em branco caso tenha outro . retorna erro
+    # Caso o número seja correto adicionamos em nosso buffer.
+
+    # Verifica se a linha no proximo index = a um numero
+    # Verifica se o linha no proximo index = a um operador
+    # Verifica se a linha no proximo index = a um (
+    # Verifica se a linha no proximo index = estadoEspecial(Uma letra maiuscula)
+
+
+def estadoParenteses(linha): # Estado para lidar com parêntese
+    #verifica se é um parenteses abrindo ou fechando
+    # caso seja abrindo armazena o contador de operandos em um buffer que é uma pilha para podermos lidar com paretentese encadeados e zera o contato atual
+    # adicionam o parenteses abrindo a pilha de parenteses usaremos para verificar pariedade e ordem correta
+    # caso seja um fechando pega o buffer e adiciona o ultimo ao contador global 
+
+    # Verifica se a linha no proximo index = a um numero
+    # Verifica se o linha no proximo index = a um operador
+    # Verifica se a linha no proximo index = a um (
+    # Verifica se a linha no proximo index = estadoEspecial(Uma letra maiuscula)
+    
+
+def estadoOperador(linha): #Estado para lidar com Operadores
+
+    # Verifica se o operador é valido, usando nossa lista de operadores [+, -, *, /, //, %, ^]
+    # verifica se o contador global de operando = 2 caso seja salva os 2 ultimos e operadorandos e o operador na ordem coreta
+    # se for menor que retorna erro
+     
+    # Verifica se a linha no proximo index = a um numero
+    # Verifica se o linha no proximo index = a um operador
+    # Verifica se a linha no proximo index = a um (
+    # Verifica se a linha no proximo index = estadoEspecial(Uma letra maiuscula)
+
+def estadoEspeciais(linha): #Estado para lidar com MEM e RES
+
+    # caso receba o res iremos armazenar o valor anterior a ele o o res então mandar para o final
+    # RES é responsavel por quando executado receber o historico e pegar o index dele - o valor passado e retornar o resultado
+    # MEM ou Qualquer conjunto ou LEtra maiuscula sozinha iremos salvar o valor passado anterior ou seja o ultimo na pilha de operando e salvar na memoria com aquele nome ou seja verificar tudo até achar um espaço ou algo que não seja um letra.
+    # Caso não tenha sido passado nenhum valor ou seja só o conjunto vindo do estado inicial ele será salvo com 0.0
+
+def parseExpressao(linha): #Inicio 
+    print(linha)
+    #Verifica se a linha no index 0 = a um numero
+    #Verifica se o linha no index 0 = a um operador
+    #Verifica se a linha no index 0 = a um (
+    #Verifica se a linha no index 0 = estadoEspecial(Uma letra maiuscula)
+
+
+
+# Especificações não posso usar REGEX. e tem que se
 
 '''
 
- começar do zero, - estado de marquina- receber a linha pelo parseExpressão então assim iniciar - o programa recebendo o primeiro valor e mandando para o estado que for a ser recebido - nele iremos verificar o Numero - e então aramazenar em um buffer e retornar a função inicial e indo para o proximo caso.
-teremos um contador global e a cada vez que consegue uma dupla de operador mais um operando iremos realizar a conta(iremos salvar essa conta no buffer pois iremos gerar o assembly na ordem de tokens do buffer),
-caso receba um parenteses adiciona em uma lista e nela iremos verificar 2 coisas tanto a parieadade como os operações. caso recebemos ((1 2 +)3 -) iremso adicionar na pilha de parentese 2 abertos e quando recebermos o de fechar iremos remover dessa lista. se terminarmos a linha e o len(pilha)!= 0 retornamos erro.
-caso tenhamos recebido valor invalido iremos retornar erro imediatamente, cada operação será um estado especificando de maneira clara a maquina de estados. - 
-A logica para ser maquina de estados é andar com a pilha ou seja não realizar loop for ou while para percorrer a linha, a ideia será assim.
+import json
 
-Inicio = parseExpression - verifica o primeiro digito e vê oque é, caso seja Num vai para estado Núm, então no estado Num verifica o segundo após salvar o primeiro nessa Pilha, sendo assim se for número ela ira chamar ela mesma e se foi especial ira para a caegoria verifica os próximos 2 tipo para ver o ponto e caso de parensetes, especial seria RES, MEN, ( )
-se for especial iremos verificar qual é se for MEN ou RES iremos para o estado final- para geramos nosso json.
-caso seja parenteses iremos adiconar na nossa lista de parenteses e sempre que vier um fechando excluimos o aberto - caso entre em parenteses reseta a contagem de Operando global salvando ela na variavel de controle para podermos retornar quando fecharmos - pois precisaremos 2 de novos.
-toda vez que fechar uma combinação de 2 numero e 1 operando iremos salvar essa combinação na lista do resultado final e apagar do buffer e zerar global para mantermos o controle, quando entrar no parenteses apesar de zerar o global não iremos remover do buffer, quando recebemos o parenteses de fechar além de excluir podemos pegar a informação da variavel global que foi zerada quando abriu parentese e readicionar podemos chamr de globaldecontroledoparentese.
-
-Precisamos verificar caso o número possua ponto, ou seja 3.14 - temos que salvar esse numero tudo junto e verifcar caso entre 3.14.5 e colocar como invalido não precisamos ter números negativos então menos 1 dor de cabeça~, a ideia do programa é só ir para o estado final quando acabar a linha todos os estados iram verificar qual é o proximo token da linha, nesse estado final de alguma maneira quando acabar todas as linhas iremos gerar um json com nome saida_fase1.txt que terá os tokens validados, ou seja ficara as expressoes. como estara na ordem de resolução da linha não precisa adicionar os parênteses.
-os outros estados especiais que são MEN e RES irão sera salvos com o número que os precede e nome da Função como está abaixo. caso seja o MEN isolado sem número o precedendo iremos salvar 0.0, como não precisamos resolver nada só iremos salvar os operandos e seu operador a lista de operadores é (+, -, *, /, %, ^)  
-
-todos abaixo são testes validos.
-
-(3.14 2.0 +)
-((1.5 2.0 *) (3.0 4.0 *) /)
-(5.0 MEM)
-(1 RES)
+# ESTADO GLOBAL
+index  = 0
+linha  = ""
+tokens = []
 
 
-"linha": 3,
-        "tokens": [
-            {
-                "tipo": "STORE",
-                "mem": "MEM",
-                "valor": "5.0"
-            }
-        ]
-    },
-    {
-        "linha": 4,
-        "tokens": [
-            {
-                "tipo": "RES",
-                "valor": 1
-            }
-        ]
-    }
- 
- 
- 
- 
- 
- 
- 
- '''
+# ENTRADA — chamada pela parte4 passando a lista de linhas
+def parseExpressao(linhas):
+    global index, linha, tokens
+
+    resultado = []
+
+    for num, raw in enumerate(linhas, 1):
+        index  = 0
+        linha  = raw.strip()
+        tokens = []
+
+        estadoInicial()
+
+        resultado.append({"linha": num, "tokens": list(tokens)})
+
+    return resultado
+
+
+# ESTADO INICIAL — coringa, decide para onde ir
+def estadoInicial():
+    global index
+
+    if index >= len(linha):
+        return
+
+    ch = linha[index]
+
+    if ch == ' ':
+        index += 1
+        return estadoInicial()
+
+    if ch.isdigit():
+        index += 1
+        return estadoNumero(ch)
+
+    raise ValueError(f"[pos {index}] Caractere inesperado: {ch!r} — linha: {linha!r}")
+
+
+# ESTADO NÚMERO
+def estadoNumero(buffer):
+    global index
+
+    if index >= len(linha):
+        _salvarNumero(buffer)
+        return
+
+    ch = linha[index]
+
+    if ch.isdigit():
+        index += 1
+        return estadoNumero(buffer + ch)
+
+    if ch == '.':
+        if '.' in buffer:
+            raise ValueError(f"[pos {index}] Número com mais de um ponto decimal: {buffer!r} — linha: {linha!r}")
+        index += 1
+        return estadoNumero(buffer + ch)
+
+    if ch == ' ':
+        _salvarNumero(buffer)
+        index += 1
+        return estadoInicial()
+
+    raise ValueError(f"[pos {index}] Caractere inesperado após número {buffer!r}: {ch!r} — linha: {linha!r}")
+
+
+# HELPER — valida e salva token NUM
+def _salvarNumero(buffer):
+    if buffer.endswith('.'):
+        raise ValueError(f"[pos {index}] Número termina com ponto: {buffer!r} — linha: {linha!r}")
+    tokens.append({"tipo": "NUM", "valor": float(buffer)})
