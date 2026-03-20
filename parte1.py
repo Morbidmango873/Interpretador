@@ -113,6 +113,10 @@ def estadoInicial():
         index += 1
         return estadoNumero(ch)
 
+    if ch == '/' and index + 1 < len(linha) and linha[index + 1] == '/':
+        index += 2
+        return estadoOperador('//')
+
     if ch in ('+', '-', '*', '/', '%', '^'):
         index += 1
         return estadoOperador(ch)
@@ -152,8 +156,9 @@ def estadoNumero(buffer):
         _salvarNumero(buffer)
         index += 1
         return estadoInicial()
-    
+
     if ch == '/' and index + 1 < len(linha) and linha[index + 1] == '/':
+        _salvarNumero(buffer)
         index += 2
         return estadoOperador('//')
 
@@ -196,6 +201,7 @@ def estadoOperador(op):
     esq = operandos[-2]["valor"]
     dir = operandos[-1]["valor"]
 
+    # salva apenas o operador — sem esquerdo/direito no JSON final
     tokens.append({"tipo": "OP", "valor": op, "esquerdo": esq, "direito": dir})
 
     if index >= len(linha):
@@ -218,7 +224,6 @@ def estadoOperador(op):
 def estadoAbreParentese():
     global tokens
 
-    # empilha o contexto atual e começa do zero
     pilha.append(list(tokens))
     tokens = []
 
@@ -232,22 +237,20 @@ def estadoFechaParentese():
     if not pilha:
         raise ValueError(f"[pos {index}] ')' sem '(' correspondente — linha: {linha!r}")
 
-    # o contexto interno deve ter exatamente 1 OP para ser válido
     ops_internos = [t for t in tokens if t["tipo"] == "OP"]
     if len(ops_internos) == 0:
         raise ValueError(f"[pos {index}] Parêntese sem operador dentro — linha: {linha!r}")
 
-    # guarda os tokens internos (para append no pai em ordem de execução)
     tokens_internos = list(tokens)
 
-    # restaura contexto do pai
     tokens = pilha.pop()
 
-    # anexa os tokens internos ao pai — mantém ordem de execução no arquivo final
-    tokens.extend(tokens_internos)
+    # anexa apenas NUM e OP internos — SUBEXP não vai para o JSON final
+    for t in tokens_internos:
+        if t["tipo"] in ("NUM", "OP"):
+            tokens.append(t)
 
-    # coloca um SUBEXP no pai como operando (representa o resultado deste grupo)
-    # o valor carrega a expressão legível para uso no OP pai (esquerdo/direito)
+    # SUBEXP permanece interno: usado só para rastrear operandos consumidos no pai
     ultimo_op = ops_internos[-1]
     subexp_val = f"({ultimo_op['esquerdo']} {ultimo_op['valor']} {ultimo_op['direito']})"
     tokens.append({"tipo": "SUBEXP", "valor": subexp_val})
@@ -255,13 +258,20 @@ def estadoFechaParentese():
     return estadoInicial()
 
 
-# ESTADO FINAL — gera o JSON com todas as linhas processadas
+# ESTADO FINAL — retorna o resultado para a parte4
 def estadoFinal():
-    with open("saida_fase1.txt", "w", encoding="utf-8") as f:
-        json.dump(resultado, f, indent=4, ensure_ascii=False)
+    # filtra SUBEXP e esquerdo/direito do JSON entregue à parte4
+    saida = []
+    for entrada in resultado:
+        tokens_limpos = []
+        for t in entrada["tokens"]:
+            if t["tipo"] == "NUM":
+                tokens_limpos.append({"tipo": "NUM", "valor": t["valor"]})
+            elif t["tipo"] == "OP":
+                tokens_limpos.append({"tipo": "OP", "valor": t["valor"]})
+        saida.append({"linha": entrada["linha"], "tokens": tokens_limpos})
 
-    return resultado
-
+    return saida
 
 # HELPER — valida e salva token NUM
 def _salvarNumero(buffer):
