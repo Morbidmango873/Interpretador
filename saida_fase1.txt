@@ -56,5 +56,31 @@
                 "valor": "/"
             }
         ]
+    },
+    {
+        "linha": 3,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "10.5"
+            },
+            {
+                "tipo": "MEM",
+                "nome": "CONTADOR",
+                "valor": "10.5"
+            }
+        ]
+    },
+    {
+        "linha": 4,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "2.0"
+            },
+            {
+                "tipo": "RES"
+            }
+        ]
     }
 ]

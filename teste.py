@@ -10,9 +10,9 @@ def testar_lexer():
     assert parseExpressao(["7 2 //"]) is not None
     assert parseExpressao(["7 2 %"]) is not None
     assert parseExpressao(["2.0 3 ^"]) is not None
-    # assert parseExpressao(["( 5 RES )"]) is not None
-    # assert parseExpressao(["( 10.5 CONTADOR )"]) is not None
-    # assert parseExpressao(["( TOTAL )"]) is not None
+    assert parseExpressao(["( 5 RES )"]) is not None
+    assert parseExpressao(["( 10.5 CONTADOR )"]) is not None
+    assert parseExpressao(["( TOTAL )"]) is not None
 
     # ── inválidos ────────────────────────────────────
     casos_invalidos = [
