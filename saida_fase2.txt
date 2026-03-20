@@ -3,6 +3,10 @@
         "linha": 1,
         "tokens": [
             {
+                "tipo": "LPAREN",
+                "valor": "("
+            },
+            {
                 "tipo": "NUM",
                 "valor": "3.14"
             },
@@ -13,6 +17,10 @@
             {
                 "tipo": "OP",
                 "valor": "+"
+            },
+            {
+                "tipo": "RPAREN",
+                "valor": ")"
             }
         ],
         "resultado": 1.1400000000000001
@@ -20,6 +28,14 @@
     {
         "linha": 2,
         "tokens": [
+            {
+                "tipo": "LPAREN",
+                "valor": "("
+            },
+            {
+                "tipo": "LPAREN",
+                "valor": "("
+            },
             {
                 "tipo": "NUM",
                 "valor": "1.5"
@@ -31,6 +47,14 @@
             {
                 "tipo": "OP",
                 "valor": "*"
+            },
+            {
+                "tipo": "RPAREN",
+                "valor": ")"
+            },
+            {
+                "tipo": "LPAREN",
+                "valor": "("
             },
             {
                 "tipo": "NUM",
@@ -45,8 +69,16 @@
                 "valor": "*"
             },
             {
+                "tipo": "RPAREN",
+                "valor": ")"
+            },
+            {
                 "tipo": "OP",
                 "valor": "/"
+            },
+            {
+                "tipo": "RPAREN",
+                "valor": ")"
             }
         ],
         "resultado": 0.25
@@ -70,6 +102,6 @@
                 "valor": 1
             }
         ],
-        "resultado": null
+        "resultado": 0.25
     }
 ]
