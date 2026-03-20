@@ -4,67 +4,17 @@
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "3.14"
+                "valor": 9.0
             },
             {
                 "tipo": "NUM",
-                "valor": "2.0"
+                "valor": 3.0
             },
             {
                 "tipo": "OP",
-                "valor": "+"
-            }
-        ]
-    },
-    {
-        "linha": 2,
-        "tokens": [
-            {
-                "tipo": "NUM",
-                "valor": "1.5"
-            },
-            {
-                "tipo": "NUM",
-                "valor": "2.0"
-            },
-            {
-                "tipo": "OP",
-                "valor": "*"
-            },
-            {
-                "tipo": "NUM",
-                "valor": "3.0"
-            },
-            {
-                "tipo": "NUM",
-                "valor": "4.0"
-            },
-            {
-                "tipo": "OP",
-                "valor": "*"
-            },
-            {
-                "tipo": "OP",
-                "valor": "/"
-            }
-        ]
-    },
-    {
-        "linha": 3,
-        "tokens": [
-            {
-                "tipo": "STORE",
-                "mem": "MEM",
-                "valor": "5.0"
-            }
-        ]
-    },
-    {
-        "linha": 4,
-        "tokens": [
-            {
-                "tipo": "RES",
-                "valor": 1
+                "valor": "/",
+                "esquerdo": 9.0,
+                "direito": 3.0
             }
         ]
     }

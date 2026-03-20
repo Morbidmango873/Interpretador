@@ -65,27 +65,31 @@ def parseExpressao(linha): #Inicio
 '''
 
 
-
 import json
 
 # ESTADO GLOBAL
-index     = 0
-linha     = ""
-tokens    = []
-resultado = []   # acumula todas as linhas para o estado final
+index        = 0
+linha        = ""
+tokens       = []
+pilha        = []   # salva contextos ao abrir '('
+resultado    = []   # acumula todas as linhas para o estado final
 
 
 # ENTRADA — chamada pela parte4 passando a lista de linhas
 def parseExpressao(linhas):
-    global index, linha, tokens, resultado
+    global index, linha, tokens, pilha, resultado
     resultado = []
 
     for num, raw in enumerate(linhas, 1):
         index  = 0
         linha  = raw.strip()
         tokens = []
+        pilha  = []
 
         estadoInicial()
+
+        if pilha:
+            raise ValueError(f"Linha {num}: {len(pilha)} parêntese(s) não fechado(s) — linha: {linha!r}")
 
         resultado.append({"linha": num, "tokens": list(tokens)})
 
@@ -112,6 +116,14 @@ def estadoInicial():
     if ch in ('+', '-', '*', '/', '%', '^'):
         index += 1
         return estadoOperador(ch)
+
+    if ch == '(':
+        index += 1
+        return estadoAbreParentese()
+
+    if ch == ')':
+        index += 1
+        return estadoFechaParentese()
 
     raise ValueError(f"[pos {index}] Caractere inesperado: {ch!r} — linha: {linha!r}")
 
@@ -140,11 +152,20 @@ def estadoNumero(buffer):
         _salvarNumero(buffer)
         index += 1
         return estadoInicial()
+    
+    if ch == '/' and index + 1 < len(linha) and linha[index + 1] == '/':
+        index += 2
+        return estadoOperador('//')
 
     if ch in ('+', '-', '*', '/', '%', '^'):
         _salvarNumero(buffer)
         index += 1
         return estadoOperador(ch)
+
+    if ch == ')':
+        _salvarNumero(buffer)
+        index += 1
+        return estadoFechaParentese()
 
     raise ValueError(f"[pos {index}] Caractere inesperado após número {buffer!r}: {ch!r} — linha: {linha!r}")
 
@@ -152,13 +173,28 @@ def estadoNumero(buffer):
 # ESTADO OPERADOR
 def estadoOperador(op):
     global index
-    nums = [t for t in tokens if t["tipo"] == "NUM"]
 
-    if len(nums) < 2:
-        raise ValueError(f"[pos {index}] Operador {op!r} exige 2 números — encontrado(s): {len(nums)} — linha: {linha!r}")
+    # operandos disponíveis: NUM e SUBEXP que ainda não foram consumidos
+    # Um operando é "consumido" se seu valor aparece como esquerdo/direito de algum OP.
+    valores_consumidos = set()
+    for t in tokens:
+        if t["tipo"] == "OP":
+            valores_consumidos.add(str(t["esquerdo"]))
+            valores_consumidos.add(str(t["direito"]))
 
-    esq = nums[-2]["valor"]
-    dir = nums[-1]["valor"]
+    operandos = [
+        t for t in tokens
+        if t["tipo"] in ("NUM", "SUBEXP") and str(t["valor"]) not in valores_consumidos
+    ]
+
+    if len(operandos) < 2:
+        raise ValueError(
+            f"[pos {index}] Operador {op!r} exige 2 operandos — "
+            f"encontrado(s): {len(operandos)} — linha: {linha!r}"
+        )
+
+    esq = operandos[-2]["valor"]
+    dir = operandos[-1]["valor"]
 
     tokens.append({"tipo": "OP", "valor": op, "esquerdo": esq, "direito": dir})
 
@@ -171,7 +207,52 @@ def estadoOperador(op):
         index += 1
         return estadoInicial()
 
+    if ch == ')':
+        index += 1
+        return estadoFechaParentese()
+
     raise ValueError(f"[pos {index}] Caractere inesperado após operador {op!r}: {ch!r} — linha: {linha!r}")
+
+
+# ESTADO ABRE PARÊNTESE
+def estadoAbreParentese():
+    global tokens
+
+    # empilha o contexto atual e começa do zero
+    pilha.append(list(tokens))
+    tokens = []
+
+    return estadoInicial()
+
+
+# ESTADO FECHA PARÊNTESE
+def estadoFechaParentese():
+    global tokens
+
+    if not pilha:
+        raise ValueError(f"[pos {index}] ')' sem '(' correspondente — linha: {linha!r}")
+
+    # o contexto interno deve ter exatamente 1 OP para ser válido
+    ops_internos = [t for t in tokens if t["tipo"] == "OP"]
+    if len(ops_internos) == 0:
+        raise ValueError(f"[pos {index}] Parêntese sem operador dentro — linha: {linha!r}")
+
+    # guarda os tokens internos (para append no pai em ordem de execução)
+    tokens_internos = list(tokens)
+
+    # restaura contexto do pai
+    tokens = pilha.pop()
+
+    # anexa os tokens internos ao pai — mantém ordem de execução no arquivo final
+    tokens.extend(tokens_internos)
+
+    # coloca um SUBEXP no pai como operando (representa o resultado deste grupo)
+    # o valor carrega a expressão legível para uso no OP pai (esquerdo/direito)
+    ultimo_op = ops_internos[-1]
+    subexp_val = f"({ultimo_op['esquerdo']} {ultimo_op['valor']} {ultimo_op['direito']})"
+    tokens.append({"tipo": "SUBEXP", "valor": subexp_val})
+
+    return estadoInicial()
 
 
 # ESTADO FINAL — gera o JSON com todas as linhas processadas
