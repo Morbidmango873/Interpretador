@@ -82,5 +82,56 @@
                 "tipo": "RES"
             }
         ]
+    },
+    {
+        "linha": 5,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "7.0"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "2.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "/"
+            }
+        ]
+    },
+    {
+        "linha": 6,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "7.0"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "2.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "%"
+            }
+        ]
+    },
+    {
+        "linha": 7,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "7.0"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "2.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "^"
+            }
+        ]
     }
 ]

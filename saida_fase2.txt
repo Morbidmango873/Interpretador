@@ -86,5 +86,59 @@
             }
         ],
         "resultado": 8.14
+    },
+    {
+        "linha": 5,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "7.0"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "2.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "/"
+            }
+        ],
+        "resultado": 3.5
+    },
+    {
+        "linha": 6,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "7.0"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "2.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "%"
+            }
+        ],
+        "resultado": 1.0
+    },
+    {
+        "linha": 7,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "7.0"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "2.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "^"
+            }
+        ],
+        "resultado": 49.0
     }
 ]
