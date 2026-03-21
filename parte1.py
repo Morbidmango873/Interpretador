@@ -1,12 +1,6 @@
 '''
 
-
-#Variaveis globais
-# Varia global indes atual.
-# Contado de operandos
-# Contador de parenteses
-# Buffer operandos
-# pilha de operandos
+# Iremos passar todas as informações para a expressão para não depender de variaveris globais e se aproximar mais de uma maquina de estados
 
 KEYWORD = ['RES']
 
