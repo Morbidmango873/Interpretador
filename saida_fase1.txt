@@ -133,5 +133,56 @@
                 "valor": "^"
             }
         ]
+    },
+    {
+        "linha": 8,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "3.14"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "5.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "+"
+            }
+        ]
+    },
+    {
+        "linha": 9,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "3.14"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "5.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "+"
+            }
+        ]
+    },
+    {
+        "linha": 10,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "3.14"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "5.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "+"
+            }
+        ]
     }
 ]

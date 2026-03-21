@@ -140,5 +140,59 @@
             }
         ],
         "resultado": 49.0
+    },
+    {
+        "linha": 8,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "3.14"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "5.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "+"
+            }
+        ],
+        "resultado": 8.14
+    },
+    {
+        "linha": 9,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "3.14"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "5.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "+"
+            }
+        ],
+        "resultado": 8.14
+    },
+    {
+        "linha": 10,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "3.14"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "5.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "+"
+            }
+        ],
+        "resultado": 8.14
     }
 ]

@@ -2,6 +2,7 @@ import json, sys
 from parte1 import parseExpressao
 from parte2 import executarExpressao
 from teste import testar_lexer
+from parte3 import gerarCodigoAssembly
 
 testar_lexer()
 # -------------------------
@@ -97,6 +98,15 @@ def main():
     exibirResultados(resultados)
 
     salvarResultados(resultados)
+
+    # ---- Fase 3 — geração de assembly ----
+    print("\nFase 3 — geração de assembly ARMv7...")
+    try:
+        gerarCodigoAssembly(tokens_por_linha)
+    except Exception as e:
+        print(f"Erro na Fase 3: {e}")
+        return
+    print("Fase 3 concluída.")
 
 
 if __name__ == "__main__":
