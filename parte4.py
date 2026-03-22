@@ -5,9 +5,7 @@ from teste import testar_lexer
 from parte3 import gerarCodigoAssembly
 
 testar_lexer()
-# -------------------------
 # LEITURA DO ARQUIVO
-# -------------------------
 def lerArquivo(caminho):
 
     with open(caminho, "r", encoding="utf-8") as f:
