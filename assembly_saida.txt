@@ -1,5 +1,5 @@
 @ ============================================================
-@ Gerado automaticamente — 6 expressao(oes)
+@ Gerado automaticamente — 7 expressao(oes)
 @ Arquitetura: ARMv7 | Escala: x100
 @ ============================================================
 
@@ -112,6 +112,24 @@
     stack_linha6_14: .word 0
     stack_linha6_15: .word 0
     result_linha6: .word 0
+    stack_top_linha7: .word 0
+    stack_linha7_0: .word 0
+    stack_linha7_1: .word 0
+    stack_linha7_2: .word 0
+    stack_linha7_3: .word 0
+    stack_linha7_4: .word 0
+    stack_linha7_5: .word 0
+    stack_linha7_6: .word 0
+    stack_linha7_7: .word 0
+    stack_linha7_8: .word 0
+    stack_linha7_9: .word 0
+    stack_linha7_10: .word 0
+    stack_linha7_11: .word 0
+    stack_linha7_12: .word 0
+    stack_linha7_13: .word 0
+    stack_linha7_14: .word 0
+    stack_linha7_15: .word 0
+    result_linha7: .word 0
 
 .section .text
 .global _start
@@ -836,6 +854,84 @@ pow_fim_linha6_0:
     ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
     LDR r3, [r4]         @ carrega valor
     LDR r0, =result_linha6
+    STR r3, [r0]
+
+@ ------------------------------------------------------------
+@ FIM LINHA 6 | INICIO LINHA 7
+@ ------------------------------------------------------------
+
+
+linha7:
+@ --- Linha 7 | RPN: 7.0 3.0 % ---
+    @ PUSH #700  (= 7.0 * 100)
+    MOV r3, #700
+    @ PUSH r3
+    LDR r4, =stack_top_linha7
+    LDR r5, [r4]        @ tmp2 = índice atual
+    LDR r4, =stack_linha7_0    @ base da pilha
+    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
+    STR r3, [r4]        @ salva valor
+    LDR r4, =stack_top_linha7
+    LDR r5, [r4]
+    ADD r5, r5, #1
+    STR r5, [r4]         @ top++
+    @ PUSH #300  (= 3.0 * 100)
+    MOV r3, #300
+    @ PUSH r3
+    LDR r4, =stack_top_linha7
+    LDR r5, [r4]        @ tmp2 = índice atual
+    LDR r4, =stack_linha7_0    @ base da pilha
+    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
+    STR r3, [r4]        @ salva valor
+    LDR r4, =stack_top_linha7
+    LDR r5, [r4]
+    ADD r5, r5, #1
+    STR r5, [r4]         @ top++
+    @ OPERACAO RESTO % (step 0)
+    @ POP -> r1
+    LDR r4, =stack_top_linha7
+    LDR r5, [r4]
+    SUB r5, r5, #1
+    STR r5, [r4]         @ top--
+    LDR r4, =stack_linha7_0
+    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
+    LDR r1, [r4]         @ carrega valor
+    @ POP -> r2
+    LDR r4, =stack_top_linha7
+    LDR r5, [r4]
+    SUB r5, r5, #1
+    STR r5, [r4]         @ top--
+    LDR r4, =stack_linha7_0
+    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
+    LDR r2, [r4]         @ carrega valor
+    @ subtrai divisor do dividendo ate nao caber mais
+mod_loop_linha7_0:
+    CMP r2, r1
+    BLT mod_fim_linha7_0
+    SUB r2, r2, r1          @ r2 -= r1
+    B   mod_loop_linha7_0
+mod_fim_linha7_0:                  @ r2 = resto
+    MOV r3, r2
+    @ PUSH r3
+    LDR r4, =stack_top_linha7
+    LDR r5, [r4]        @ tmp2 = índice atual
+    LDR r4, =stack_linha7_0    @ base da pilha
+    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
+    STR r3, [r4]        @ salva valor
+    LDR r4, =stack_top_linha7
+    LDR r5, [r4]
+    ADD r5, r5, #1
+    STR r5, [r4]         @ top++
+    @ Resultado final -> result_linha7
+    @ POP -> r3
+    LDR r4, =stack_top_linha7
+    LDR r5, [r4]
+    SUB r5, r5, #1
+    STR r5, [r4]         @ top--
+    LDR r4, =stack_linha7_0
+    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
+    LDR r3, [r4]         @ carrega valor
+    LDR r0, =result_linha7
     STR r3, [r0]
 
 @ --- Encerramento do programa ---

@@ -321,6 +321,30 @@ def estrutura_op_potencia(label: str, step: int) -> str:
     )
 
 
+def estrutura_op_resto(label: str, step: int) -> str:
+    """
+    Resto da divisão %: pop b, pop a, a % b, push resultado.
+    Usa subtração repetida — o que sobrar em r2 após o loop é o resto.
+    Ex: 700 % 300 = 100  (= 7.00 % 3.00 = 1.00 em escala x100)
+    """
+    lbl_loop = f"mod_loop_{label}_{step}"
+    lbl_fim  = f"mod_fim_{label}_{step}"
+    return (
+        f"    @ OPERACAO RESTO % (step {step})\n"
+        + estrutura_pop(label, "r1", "r4", "r5")   # r1 = divisor
+        + estrutura_pop(label, "r2", "r4", "r5")   # r2 = dividendo
+        + f"    @ subtrai divisor do dividendo ate nao caber mais\n"
+        + f"{lbl_loop}:\n"
+        + f"    CMP r2, r1\n"
+        + f"    BLT {lbl_fim}\n"
+        + f"    SUB r2, r2, r1          @ r2 -= r1\n"
+        + f"    B   {lbl_loop}\n"
+        + f"{lbl_fim}:                  @ r2 = resto\n"
+        + f"    MOV r3, r2\n"
+        + estrutura_push(label, "r3", "r4", "r5")
+    )
+
+
 OPERADORES_PILHA = {
     "+":  estrutura_op_soma,
     "-":  estrutura_op_subtracao,
@@ -328,6 +352,7 @@ OPERADORES_PILHA = {
     "/":  estrutura_op_divisao,
     "//": estrutura_op_divisao_inteira,
     "^":  estrutura_op_potencia,
+    "%":  estrutura_op_resto,
 }
 
 
@@ -480,6 +505,18 @@ def gerarassembly(json_data: dict) -> None:
 # Linha 6: 3.0 2.0 ^ 1.0 +         = 10.00  → result = 1000
 # ══════════════════════════════════════════════════════════════
 
+# ══════════════════════════════════════════════════════════════
+# EXEMPLO DE USO
+# Linha 1: 3.0 4.0 +               = 7.00   → result = 700
+# Linha 2: 1.5 2.0 * 1.0 + 3.0 4.0 * /
+#          = (3.0+1.0)/12.0 = 0.33 → result = 33
+# Linha 3: 6.0 2.0 *               = 12.00  → result = 1200
+# Linha 4: 7.0 3.0 //              = 2.00   → result = 2
+# Linha 5: 2.0 3.0 ^               = 8.00   → result = 800
+# Linha 6: 3.0 2.0 ^ 1.0 +         = 10.00  → result = 1000
+# Linha 7: 7.0 3.0 %               = 1.00   → result = 100
+# ══════════════════════════════════════════════════════════════
+
 if __name__ == "__main__":
     dados = {
         "linhas": [
@@ -537,6 +574,14 @@ if __name__ == "__main__":
                     {"tipo": "OP",  "valor": "^"},
                     {"tipo": "NUM", "valor": "1.0"},
                     {"tipo": "OP",  "valor": "+"}
+                ]
+            },
+            {
+                "linha": 7,
+                "tokens": [
+                    {"tipo": "NUM", "valor": "7.0"},
+                    {"tipo": "NUM", "valor": "3.0"},
+                    {"tipo": "OP",  "valor": "%"}
                 ]
             }
         ]
