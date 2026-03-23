@@ -22,11 +22,10 @@
         "tokens": [
             {
                 "tipo": "MEM",
-                "nome": "MEN",
-                "valor": "0.0"
+                "nome": "MEN"
             }
         ],
-        "resultado": null
+        "resultado": 0.0
     },
     {
         "linha": 3,
@@ -37,22 +36,20 @@
             },
             {
                 "tipo": "MEM",
-                "nome": "MEN",
-                "valor": "2.0"
+                "nome": "MEN"
             }
         ],
-        "resultado": 2.0
+        "resultado": null
     },
     {
         "linha": 4,
         "tokens": [
             {
                 "tipo": "MEM",
-                "nome": "MEN",
-                "valor": "0.0"
+                "nome": "MEN"
             }
         ],
-        "resultado": null
+        "resultado": 2.0
     },
     {
         "linha": 5,
@@ -107,7 +104,7 @@
                 "tipo": "RES"
             }
         ],
-        "resultado": 8.14
+        "resultado": 2.0
     },
     {
         "linha": 7,

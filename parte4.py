@@ -2,6 +2,7 @@ import json, sys
 from parte1 import parseExpressao
 from parte2 import executarExpressao
 from teste import testar_lexer
+from parte3 import gerarassembly
 
 testar_lexer()
 # LEITURA DO ARQUIVO
@@ -40,7 +41,7 @@ def exibirResultados(resultados):
             elif t["tipo"] == "OP":
                 partes.append(t["valor"])
             elif t["tipo"] == "MEM":
-                partes.append(f"({t['nome']} = {t['valor']})")
+                partes.append(f"({t['nome']})")
             elif t["tipo"] == "RES":
                 partes.append("RES")
 
@@ -82,6 +83,9 @@ def main():
         return
 
     print("Fase 1 concluída.")
+    
+    dados = ler_json_arquivo("saida_fase1.txt")
+    gerarassembly(dados)
 
     print("\nFase 2 — execução das expressões...")
     try:
@@ -97,6 +101,23 @@ def main():
     salvarResultados(resultados)
 
 
-
+def ler_json_arquivo(caminho: str = "saida_fase1.txt") -> dict | None:
+    """
+    Lê o JSON de entrada do arquivo especificado.
+    Retorna o dicionário ou None se houver erro.
+    """
+    try:
+        with open(caminho, "r", encoding="utf-8") as f:
+            dados = json.load(f)
+        print(f"JSON carregado com sucesso de '{caminho}'")
+        return dados
+    except FileNotFoundError:
+        print(f"Erro: arquivo '{caminho}' não encontrado.")
+        return None
+    except json.JSONDecodeError as e:
+        print(f"Erro ao decodificar JSON: {e}")
+        return None
+ 
+ 
 if __name__ == "__main__":
     main()

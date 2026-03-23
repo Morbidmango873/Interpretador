@@ -1,6 +1,5 @@
-# ══════════════════════════════════════════════════════════════
+import json
 # ESTRUTURAS PADRÃO DO ASSEMBLY
-# ══════════════════════════════════════════════════════════════
 
 ESCALA = 100  # float * 100 para preservar 2 casas decimais
 
@@ -86,12 +85,10 @@ def estrutura_exit() -> str:
     )
 
 
-# ══════════════════════════════════════════════════════════════
 # ESTRUTURAS DE PILHA EM MEMÓRIA
 # A pilha é simulada com slots fixos no .data (stack_0..stack_N)
 # e um índice (stack_top) que indica o próximo slot livre.
 # Todas as operações repetem o mesmo padrão push/pop.
-# ══════════════════════════════════════════════════════════════
 
 MAX_PILHA = 16  # slots máximos por linha
 
@@ -140,10 +137,8 @@ def estrutura_pop(label: str, reg_dest: str, reg_tmp1: str, reg_tmp2: str) -> st
     )
 
 
-# ══════════════════════════════════════════════════════════════
 # OPERAÇÕES SOBRE A PILHA
 # Cada op faz: pop b, pop a, calcula a OP b, push resultado
-# ══════════════════════════════════════════════════════════════
 
 def estrutura_op_soma(label: str, step: int) -> str:
     return (
@@ -259,14 +254,7 @@ def estrutura_op_divisao_inteira(label: str, step: int) -> str:
 
 
 def estrutura_op_potencia(label: str, step: int) -> str:
-    """
-    Potência por multiplicação repetida: pop exp, pop base, base^exp, push.
-    O expoente é desescalado (/100) para obter o inteiro real antes do loop.
-    Ex: 2.0^3 → base=200, exp=300 → desescala exp: 300/100=3 → 200*200*200/100/100 = 800 (=8.00)
-    Cada multiplicação normaliza por 100 para manter a escala correta.
-    Expoente 0 retorna 100 (= 1.0 em escala x100).
-    Apenas expoentes inteiros positivos são suportados.
-    """
+
     lbl_deesc   = f"pow_deesc_{label}_{step}"    # loop desescalar expoente
     lbl_deesc_f = f"pow_deesc_fim_{label}_{step}"
     lbl_loop    = f"pow_loop_{label}_{step}"     # loop de multiplicação
@@ -356,11 +344,6 @@ OPERADORES_PILHA = {
 }
 
 
-# ══════════════════════════════════════════════════════════════
-# REGISTRO GLOBAL DE VARIÁVEIS MEM
-# Cada nome (ex: "MEN") gera uma única entrada no .data compartilhada
-# entre todas as linhas — persistente durante toda a execução.
-# ══════════════════════════════════════════════════════════════
 
 _mem_vars: dict[str, int] = {}  # nome -> valor inicial (sempre 0)
 
@@ -375,12 +358,7 @@ def estrutura_vars_mem() -> list[tuple[str, int]]:
 
 
 def gerar_bloco_mem(linha: int, tokens: list[dict]) -> tuple[list, str] | None:
-    """
-    Interpreta o token MEM:
-      - COM NUM antes: escrita — salva NUM em mem_NOME e em result_linha
-      - SEM NUM:       leitura — copia mem_NOME para result_linha
-    Primeira leitura sem escrita prévia retorna 0 (inicializado no .data).
-    """
+
     label = f"linha{linha}"
 
     mem_token = next((t for t in tokens if t.get("tipo") == "MEM"), None)
@@ -418,9 +396,7 @@ def gerar_bloco_mem(linha: int, tokens: list[dict]) -> tuple[list, str] | None:
     return variaveis, codigo
 
 
-# ══════════════════════════════════════════════════════════════
 # GERADOR RES — busca resultado de N linhas acima
-# ══════════════════════════════════════════════════════════════
 
 def gerar_bloco_res(linha: int, tokens: list[dict], todas_linhas: list[int]) -> tuple[list, str] | None:
     """
@@ -458,9 +434,7 @@ def gerar_bloco_res(linha: int, tokens: list[dict], todas_linhas: list[int]) -> 
     return variaveis, codigo
 
 
-# ══════════════════════════════════════════════════════════════
 # GERADOR RPN — interpreta tokens e monta o bloco assembly
-# ══════════════════════════════════════════════════════════════
 
 def gerar_bloco_rpn(linha: int, tokens: list[dict]) -> tuple[list, str] | None:
     """
@@ -511,9 +485,7 @@ def gerar_bloco_rpn(linha: int, tokens: list[dict]) -> tuple[list, str] | None:
     return variaveis, codigo
 
 
-# ══════════════════════════════════════════════════════════════
 # DISPATCHER — lê e interpreta o JSON
-# ══════════════════════════════════════════════════════════════
 
 MAX_EXPRESSOES = 10
 
@@ -523,7 +495,10 @@ def gerarassembly(json_data: dict) -> None:
     gera assembly ARMv7 usando pilha em memória para cada expressão,
     e salva tudo em um único arquivo .txt.
     """
-    entradas = json_data.get("linhas", [])
+    if isinstance(json_data, list):
+        entradas = json_data
+    else:
+        entradas = json_data.get("linhas", [])
 
     if len(entradas) > MAX_EXPRESSOES:
         print(f"Aviso: máximo de {MAX_EXPRESSOES} expressões. As extras serão ignoradas.")
@@ -591,108 +566,3 @@ def gerarassembly(json_data: dict) -> None:
 
     print(f"Assembly gerado com sucesso -> '{nome_arquivo}' ({len(blocos)} expressões)")
 
-
-# ══════════════════════════════════════════════════════════════
-# EXEMPLO DE USO
-# RPN: 1.5 2.0 * 1.0 + 3.0 4.0 * /
-# = (1.5*2.0 + 1.0) / (3.0*4.0)
-# = (150*200 + 100) / (300*400)   [escala x100]
-# = 30100 / 120000 = 0 (divisão inteira)
-#
-# Expressão simples para verificação:
-# RPN: 3.0 4.0 +  →  300 + 400 = 700
-# RPN: 6.0 2.0 *  →  600 * 200 = 120000
-# ══════════════════════════════════════════════════════════════
-
-# ══════════════════════════════════════════════════════════════
-# EXEMPLO DE USO
-# Linha 1: 3.0 4.0 +        = 7.00       → result = 700
-# Linha 2: 1.5 2.0 * 1.0 + 3.0 4.0 * /
-#          = (3.0+1.0)/12.0 = 0.33       → result = 33
-# Linha 3: 6.0 2.0 *        = 12.00      → result = 1200
-# Linha 4: 7.0 3.0 //       = 2.00       → result = 2
-# Linha 5: 2.0 3.0 ^        = 8.00       → result = 800
-# Linha 6: 3.0 2.0 ^ 1.0 +  = (9.0+1.0) = 10.00 → result = 1000
-# ══════════════════════════════════════════════════════════════
-
-# ══════════════════════════════════════════════════════════════
-# EXEMPLO DE USO
-# Linha 1: 3.0 4.0 +               = 7.00   → result = 700
-# Linha 2: 1.5 2.0 * 1.0 + 3.0 4.0 * /
-#          = (3.0+1.0)/12.0 = 0.33 → result = 33
-# Linha 3: 6.0 2.0 *               = 12.00  → result = 1200
-# Linha 4: 7.0 3.0 //              = 2.00   → result = 2
-# Linha 5: 2.0 3.0 ^               = 8.00   → result = 800
-# Linha 6: 3.0 2.0 ^ 1.0 +         = 10.00  → result = 1000
-# ══════════════════════════════════════════════════════════════
-
-# ══════════════════════════════════════════════════════════════
-# EXEMPLO DE USO
-# Linha 1: 3.0 4.0 +               = 7.00   → result = 700
-# Linha 2: 1.5 2.0 * 1.0 + 3.0 4.0 * /
-#          = (3.0+1.0)/12.0 = 0.33 → result = 33
-# Linha 3: 6.0 2.0 *               = 12.00  → result = 1200
-# Linha 4: 7.0 3.0 //              = 2.00   → result = 2
-# Linha 5: 2.0 3.0 ^               = 8.00   → result = 800
-# Linha 6: 3.0 2.0 ^ 1.0 +         = 10.00  → result = 1000
-# Linha 7: 7.0 3.0 %               = 1.00   → result = 100
-# ══════════════════════════════════════════════════════════════
-
-# ══════════════════════════════════════════════════════════════
-# EXEMPLO DE USO
-# Linha 1: 3.0 4.0 +    = 7.00  → result_linha1 = 700
-# Linha 2: 2.0 3.0 *    = 6.00  → result_linha2 = 600
-# Linha 3: RES(1)        → copia result_linha2 = 600
-# Linha 4: RES(3)        → copia result_linha1 = 700
-# Linha 5: RES(10)       → ERRO: linha -5 nao existe
-# ══════════════════════════════════════════════════════════════
-
-# ══════════════════════════════════════════════════════════════
-# EXEMPLO DE USO
-# Linha 1: MEM leitura MEN  → 0   (primeira vez, sem escrita)
-# Linha 2: 3.0 4.0 +        → 700
-# Linha 3: 2.0 MEM escrita MEN → salva 200 em MEN, result = 200
-# Linha 4: MEM leitura MEN  → 200 (valor salvo)
-# Linha 5: MEM leitura MEN  → 200 (persiste)
-# ══════════════════════════════════════════════════════════════
-
-if __name__ == "__main__":
-    dados = {
-        "linhas": [
-            {
-                "linha": 1,
-                "tokens": [
-                    {"tipo": "MEM", "nome": "MEN"}
-                ]
-            },
-            {
-                "linha": 2,
-                "tokens": [
-                    {"tipo": "NUM", "valor": "3.0"},
-                    {"tipo": "NUM", "valor": "4.0"},
-                    {"tipo": "OP",  "valor": "+"}
-                ]
-            },
-            {
-                "linha": 3,
-                "tokens": [
-                    {"tipo": "NUM", "valor": "2.0"},
-                    {"tipo": "MEM", "nome": "MEN"}
-                ]
-            },
-            {
-                "linha": 4,
-                "tokens": [
-                    {"tipo": "MEM", "nome": "MEN"}
-                ]
-            },
-            {
-                "linha": 5,
-                "tokens": [
-                    {"tipo": "MEM", "nome": "MEN"}
-                ]
-            }
-        ]
-    }
-
-    gerarassembly(dados)
