@@ -357,6 +357,46 @@ OPERADORES_PILHA = {
 
 
 # ══════════════════════════════════════════════════════════════
+# GERADOR RES — busca resultado de N linhas acima
+# ══════════════════════════════════════════════════════════════
+
+def gerar_bloco_res(linha: int, tokens: list[dict], todas_linhas: list[int]) -> tuple[list, str] | None:
+    """
+    Interpreta o token RES: lê o NUM anterior para saber quantas linhas
+    subir, valida se a linha alvo existe, e gera assembly que copia
+    result_linhaN para result_linha_atual.
+    """
+    label = f"linha{linha}"
+
+    # Extrai o valor do NUM antes do RES
+    num_token = next((t for t in tokens if t["tipo"] == "NUM"), None)
+    if num_token is None:
+        print(f"[Linha {linha}] Erro: RES sem valor numérico.")
+        return None
+
+    n = int(float(num_token["valor"]))  # quantas linhas acima
+
+    # Calcula a linha alvo
+    linha_alvo = linha - n
+
+    # Valida se a linha alvo existe nas linhas processadas
+    if linha_alvo not in todas_linhas:
+        print(f"[Linha {linha}] Erro: RES({n}) aponta para linha {linha_alvo} que não existe.")
+        return None
+
+    label_alvo = f"linha{linha_alvo}"
+
+    # Variáveis necessárias: apenas o result desta linha
+    variaveis = [(f"result_{label}", 0)]
+
+    codigo  = f"@ --- Linha {linha} | RES({n}) -> copia result_{label_alvo} ---\n"
+    codigo += estrutura_carregar_variaveis("r0", "r3", f"result_{label_alvo}")
+    codigo += estrutura_salvar_resultado("r0", "r3", f"result_{label}")
+
+    return variaveis, codigo
+
+
+# ══════════════════════════════════════════════════════════════
 # GERADOR RPN — interpreta tokens e monta o bloco assembly
 # ══════════════════════════════════════════════════════════════
 
@@ -429,16 +469,27 @@ def gerarassembly(json_data: dict) -> None:
 
     blocos = []
 
+    # Lista de linhas válidas processadas até agora (para validar RES)
+    linhas_processadas = []
+
     for i, entrada in enumerate(entradas):
         linha  = entrada.get("linha", i + 1)
         tokens = entrada.get("tokens", [])
 
-        resultado = gerar_bloco_rpn(linha, tokens)
+        # Detecta se é um bloco RES
+        tem_res = any(t.get("tipo") == "RES" for t in tokens)
+
+        if tem_res:
+            resultado = gerar_bloco_res(linha, tokens, linhas_processadas)
+        else:
+            resultado = gerar_bloco_rpn(linha, tokens)
+
         if resultado is None:
             continue
 
         variaveis, codigo = resultado
         blocos.append((linha, variaveis, codigo))
+        linhas_processadas.append(linha)
 
     if not blocos:
         print("Nenhuma expressão válida encontrada.")
@@ -517,6 +568,15 @@ def gerarassembly(json_data: dict) -> None:
 # Linha 7: 7.0 3.0 %               = 1.00   → result = 100
 # ══════════════════════════════════════════════════════════════
 
+# ══════════════════════════════════════════════════════════════
+# EXEMPLO DE USO
+# Linha 1: 3.0 4.0 +    = 7.00  → result_linha1 = 700
+# Linha 2: 2.0 3.0 *    = 6.00  → result_linha2 = 600
+# Linha 3: RES(1)        → copia result_linha2 = 600
+# Linha 4: RES(3)        → copia result_linha1 = 700
+# Linha 5: RES(10)       → ERRO: linha -5 nao existe
+# ══════════════════════════════════════════════════════════════
+
 if __name__ == "__main__":
     dados = {
         "linhas": [
@@ -531,59 +591,57 @@ if __name__ == "__main__":
             {
                 "linha": 2,
                 "tokens": [
-                    {"tipo": "NUM", "valor": "1.5"},
                     {"tipo": "NUM", "valor": "2.0"},
-                    {"tipo": "OP",  "valor": "*"},
-                    {"tipo": "NUM", "valor": "1.0"},
-                    {"tipo": "OP",  "valor": "+"},
                     {"tipo": "NUM", "valor": "3.0"},
-                    {"tipo": "NUM", "valor": "4.0"},
-                    {"tipo": "OP",  "valor": "*"},
-                    {"tipo": "OP",  "valor": "/"}
+                    {"tipo": "OP",  "valor": "*"}
                 ]
             },
             {
                 "linha": 3,
                 "tokens": [
-                    {"tipo": "NUM", "valor": "6.0"},
-                    {"tipo": "NUM", "valor": "2.0"},
-                    {"tipo": "OP",  "valor": "*"}
+                    {"tipo": "NUM", "valor": "1.0"},
+                    {"tipo": "RES"}
                 ]
             },
             {
                 "linha": 4,
                 "tokens": [
-                    {"tipo": "NUM", "valor": "7.0"},
                     {"tipo": "NUM", "valor": "3.0"},
-                    {"tipo": "OP",  "valor": "//"}
+                    {"tipo": "RES"}
                 ]
             },
             {
                 "linha": 5,
                 "tokens": [
-                    {"tipo": "NUM", "valor": "2.0"},
-                    {"tipo": "NUM", "valor": "3.0"},
-                    {"tipo": "OP",  "valor": "^"}
+                    {"tipo": "NUM", "valor": "10.0"},
+                    {"tipo": "RES"}
                 ]
             },
             {
                 "linha": 6,
                 "tokens": [
-                    {"tipo": "NUM", "valor": "3.0"},
+                    {"tipo": "NUM", "valor": "20.0"},
                     {"tipo": "NUM", "valor": "2.0"},
-                    {"tipo": "OP",  "valor": "^"},
-                    {"tipo": "NUM", "valor": "1.0"},
-                    {"tipo": "OP",  "valor": "+"}
+                    {"tipo": "OP",  "valor": "//"}
                 ]
             },
             {
                 "linha": 7,
                 "tokens": [
-                    {"tipo": "NUM", "valor": "7.0"},
                     {"tipo": "NUM", "valor": "3.0"},
+                    {"tipo": "NUM", "valor": "2.0"},
+                    {"tipo": "OP",  "valor": "^"}
+                ]
+            },
+            {
+                "linha": 8,
+                "tokens": [
+                    {"tipo": "NUM", "valor": "10.0"},
+                    {"tipo": "NUM", "valor": "4.0"},
                     {"tipo": "OP",  "valor": "%"}
                 ]
             }
+            
         ]
     }
 

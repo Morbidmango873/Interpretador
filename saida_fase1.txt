@@ -62,20 +62,6 @@
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "10.5"
-            },
-            {
-                "tipo": "MEM",
-                "nome": "CONTADOR",
-                "valor": "10.5"
-            }
-        ]
-    },
-    {
-        "linha": 4,
-        "tokens": [
-            {
-                "tipo": "NUM",
                 "valor": "2.0"
             },
             {
@@ -84,7 +70,7 @@
         ]
     },
     {
-        "linha": 5,
+        "linha": 4,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -101,7 +87,7 @@
         ]
     },
     {
-        "linha": 6,
+        "linha": 5,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -118,7 +104,7 @@
         ]
     },
     {
-        "linha": 7,
+        "linha": 6,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -131,6 +117,23 @@
             {
                 "tipo": "OP",
                 "valor": "^"
+            }
+        ]
+    },
+    {
+        "linha": 7,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "3.14"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "5.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "+"
             }
         ]
     },
@@ -153,23 +156,6 @@
     },
     {
         "linha": 9,
-        "tokens": [
-            {
-                "tipo": "NUM",
-                "valor": "3.14"
-            },
-            {
-                "tipo": "NUM",
-                "valor": "5.0"
-            },
-            {
-                "tipo": "OP",
-                "valor": "+"
-            }
-        ]
-    },
-    {
-        "linha": 10,
         "tokens": [
             {
                 "tipo": "NUM",
