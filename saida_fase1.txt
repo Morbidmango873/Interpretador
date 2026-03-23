@@ -20,6 +20,37 @@
         "linha": 2,
         "tokens": [
             {
+                "tipo": "MEM",
+                "nome": "MEN"
+            }
+        ]
+    },
+    {
+        "linha": 3,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "2.0"
+            },
+            {
+                "tipo": "MEM",
+                "nome": "MEN"
+            }
+        ]
+    },
+    {
+        "linha": 4,
+        "tokens": [
+            {
+                "tipo": "MEM",
+                "nome": "MEN"
+            }
+        ]
+    },
+    {
+        "linha": 5,
+        "tokens": [
+            {
                 "tipo": "NUM",
                 "valor": "1.5"
             },
@@ -58,7 +89,7 @@
         ]
     },
     {
-        "linha": 3,
+        "linha": 6,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -70,7 +101,7 @@
         ]
     },
     {
-        "linha": 4,
+        "linha": 7,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -87,7 +118,7 @@
         ]
     },
     {
-        "linha": 5,
+        "linha": 8,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -104,7 +135,7 @@
         ]
     },
     {
-        "linha": 6,
+        "linha": 9,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -121,41 +152,7 @@
         ]
     },
     {
-        "linha": 7,
-        "tokens": [
-            {
-                "tipo": "NUM",
-                "valor": "3.14"
-            },
-            {
-                "tipo": "NUM",
-                "valor": "5.0"
-            },
-            {
-                "tipo": "OP",
-                "valor": "+"
-            }
-        ]
-    },
-    {
-        "linha": 8,
-        "tokens": [
-            {
-                "tipo": "NUM",
-                "valor": "3.14"
-            },
-            {
-                "tipo": "NUM",
-                "valor": "5.0"
-            },
-            {
-                "tipo": "OP",
-                "valor": "+"
-            }
-        ]
-    },
-    {
-        "linha": 9,
+        "linha": 10,
         "tokens": [
             {
                 "tipo": "NUM",

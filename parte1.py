@@ -59,8 +59,6 @@ def parseExpressao(linha): #Inicio
 
 '''
 
-
-
 import json
 
 # ENTRADA — única interface externa, chamada pela parte4
@@ -223,7 +221,7 @@ def estadoMEM(linha, index, tokens, pilha, buffer):
     nums = [t for t in tokens if t["tipo"] == "NUM"]
     valor = nums[-1]["valor"] if nums else "0.0"
 
-    return estadoFechaEspecial(linha, index, tokens + [{"tipo": "MEM", "nome": buffer, "valor": valor}], pilha)
+    return estadoFechaEspecial(linha, index, tokens + [{"tipo": "MEM", "nome": buffer,}], pilha)
 
 
 # ESTADO FECHA ESPECIAL — drena espaços e ')' após RES ou MEM e encerra
@@ -302,7 +300,7 @@ def estadoFinal(resultado):
             elif t["tipo"] == "RES":
                 tokens_limpos.append({"tipo": "RES"})
             elif t["tipo"] == "MEM":
-                tokens_limpos.append({"tipo": "MEM", "nome": t["nome"], "valor": t["valor"]})
+                tokens_limpos.append({"tipo": "MEM", "nome": t["nome"]})
         saida.append({"linha": entrada["linha"], "tokens": tokens_limpos})
 
     with open("saida_fase1.txt", "w", encoding="utf-8") as f:

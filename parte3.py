@@ -357,6 +357,68 @@ OPERADORES_PILHA = {
 
 
 # ══════════════════════════════════════════════════════════════
+# REGISTRO GLOBAL DE VARIÁVEIS MEM
+# Cada nome (ex: "MEN") gera uma única entrada no .data compartilhada
+# entre todas as linhas — persistente durante toda a execução.
+# ══════════════════════════════════════════════════════════════
+
+_mem_vars: dict[str, int] = {}  # nome -> valor inicial (sempre 0)
+
+def registrar_mem_var(nome: str) -> None:
+    """Registra uma variável MEM global se ainda não existir."""
+    if nome not in _mem_vars:
+        _mem_vars[nome] = 0
+
+def estrutura_vars_mem() -> list[tuple[str, int]]:
+    """Retorna todas as variáveis MEM para o .section .data."""
+    return [(f"mem_{nome}", valor) for nome, valor in _mem_vars.items()]
+
+
+def gerar_bloco_mem(linha: int, tokens: list[dict]) -> tuple[list, str] | None:
+    """
+    Interpreta o token MEM:
+      - COM NUM antes: escrita — salva NUM em mem_NOME e em result_linha
+      - SEM NUM:       leitura — copia mem_NOME para result_linha
+    Primeira leitura sem escrita prévia retorna 0 (inicializado no .data).
+    """
+    label = f"linha{linha}"
+
+    mem_token = next((t for t in tokens if t.get("tipo") == "MEM"), None)
+    if mem_token is None:
+        print(f"[Linha {linha}] Erro: token MEM não encontrado.")
+        return None
+
+    nome = mem_token.get("nome", "").upper()
+    if not nome:
+        print(f"[Linha {linha}] Erro: MEM sem nome.")
+        return None
+
+    # Registra a variável global
+    registrar_mem_var(nome)
+    mem_label = f"mem_{nome}"
+
+    # Verifica se há NUM (escrita) ou não (leitura)
+    num_token = next((t for t in tokens if t.get("tipo") == "NUM"), None)
+
+    variaveis = [(f"result_{label}", 0)]
+
+    if num_token is not None:
+        # ESCRITA: salva o valor em mem_NOME e em result_linha
+        val_int = float_para_inteiro(float(num_token["valor"]))
+        codigo  = f"@ --- Linha {linha} | MEM ESCRITA: {nome} = {num_token['valor']} ---\n"
+        codigo += f"    MOV r3, #{val_int}\n"
+        codigo += estrutura_salvar_resultado("r0", "r3", mem_label)
+        codigo += estrutura_salvar_resultado("r0", "r3", f"result_{label}")
+    else:
+        # LEITURA: copia mem_NOME para result_linha
+        codigo  = f"@ --- Linha {linha} | MEM LEITURA: {nome} ---\n"
+        codigo += estrutura_carregar_variaveis("r0", "r3", mem_label)
+        codigo += estrutura_salvar_resultado("r0", "r3", f"result_{label}")
+
+    return variaveis, codigo
+
+
+# ══════════════════════════════════════════════════════════════
 # GERADOR RES — busca resultado de N linhas acima
 # ══════════════════════════════════════════════════════════════
 
@@ -469,6 +531,9 @@ def gerarassembly(json_data: dict) -> None:
 
     blocos = []
 
+    # Limpa registro de MEMs globais para esta execução
+    _mem_vars.clear()
+
     # Lista de linhas válidas processadas até agora (para validar RES)
     linhas_processadas = []
 
@@ -476,10 +541,12 @@ def gerarassembly(json_data: dict) -> None:
         linha  = entrada.get("linha", i + 1)
         tokens = entrada.get("tokens", [])
 
-        # Detecta se é um bloco RES
         tem_res = any(t.get("tipo") == "RES" for t in tokens)
+        tem_mem = any(t.get("tipo") == "MEM" for t in tokens)
 
-        if tem_res:
+        if tem_mem:
+            resultado = gerar_bloco_mem(linha, tokens)
+        elif tem_res:
             resultado = gerar_bloco_res(linha, tokens, linhas_processadas)
         else:
             resultado = gerar_bloco_rpn(linha, tokens)
@@ -499,6 +566,9 @@ def gerarassembly(json_data: dict) -> None:
     todas_variaveis = []
     for _, variaveis, _ in blocos:
         todas_variaveis.extend(variaveis)
+
+    # Adiciona variáveis MEM globais ao .data
+    todas_variaveis = estrutura_vars_mem() + todas_variaveis
 
     conteudo  = estrutura_cabecalho_arquivo(len(blocos))
     conteudo += estrutura_secao_data(todas_variaveis)
@@ -577,11 +647,26 @@ def gerarassembly(json_data: dict) -> None:
 # Linha 5: RES(10)       → ERRO: linha -5 nao existe
 # ══════════════════════════════════════════════════════════════
 
+# ══════════════════════════════════════════════════════════════
+# EXEMPLO DE USO
+# Linha 1: MEM leitura MEN  → 0   (primeira vez, sem escrita)
+# Linha 2: 3.0 4.0 +        → 700
+# Linha 3: 2.0 MEM escrita MEN → salva 200 em MEN, result = 200
+# Linha 4: MEM leitura MEN  → 200 (valor salvo)
+# Linha 5: MEM leitura MEN  → 200 (persiste)
+# ══════════════════════════════════════════════════════════════
+
 if __name__ == "__main__":
     dados = {
         "linhas": [
             {
                 "linha": 1,
+                "tokens": [
+                    {"tipo": "MEM", "nome": "MEN"}
+                ]
+            },
+            {
+                "linha": 2,
                 "tokens": [
                     {"tipo": "NUM", "valor": "3.0"},
                     {"tipo": "NUM", "valor": "4.0"},
@@ -589,59 +674,24 @@ if __name__ == "__main__":
                 ]
             },
             {
-                "linha": 2,
-                "tokens": [
-                    {"tipo": "NUM", "valor": "2.0"},
-                    {"tipo": "NUM", "valor": "3.0"},
-                    {"tipo": "OP",  "valor": "*"}
-                ]
-            },
-            {
                 "linha": 3,
                 "tokens": [
-                    {"tipo": "NUM", "valor": "1.0"},
-                    {"tipo": "RES"}
+                    {"tipo": "NUM", "valor": "2.0"},
+                    {"tipo": "MEM", "nome": "MEN"}
                 ]
             },
             {
                 "linha": 4,
                 "tokens": [
-                    {"tipo": "NUM", "valor": "3.0"},
-                    {"tipo": "RES"}
+                    {"tipo": "MEM", "nome": "MEN"}
                 ]
             },
             {
                 "linha": 5,
                 "tokens": [
-                    {"tipo": "NUM", "valor": "10.0"},
-                    {"tipo": "RES"}
-                ]
-            },
-            {
-                "linha": 6,
-                "tokens": [
-                    {"tipo": "NUM", "valor": "20.0"},
-                    {"tipo": "NUM", "valor": "2.0"},
-                    {"tipo": "OP",  "valor": "//"}
-                ]
-            },
-            {
-                "linha": 7,
-                "tokens": [
-                    {"tipo": "NUM", "valor": "3.0"},
-                    {"tipo": "NUM", "valor": "2.0"},
-                    {"tipo": "OP",  "valor": "^"}
-                ]
-            },
-            {
-                "linha": 8,
-                "tokens": [
-                    {"tipo": "NUM", "valor": "10.0"},
-                    {"tipo": "NUM", "valor": "4.0"},
-                    {"tipo": "OP",  "valor": "%"}
+                    {"tipo": "MEM", "nome": "MEN"}
                 ]
             }
-            
         ]
     }
 

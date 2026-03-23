@@ -21,6 +21,43 @@
         "linha": 2,
         "tokens": [
             {
+                "tipo": "MEM",
+                "nome": "MEN",
+                "valor": "0.0"
+            }
+        ],
+        "resultado": null
+    },
+    {
+        "linha": 3,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "2.0"
+            },
+            {
+                "tipo": "MEM",
+                "nome": "MEN",
+                "valor": "2.0"
+            }
+        ],
+        "resultado": 2.0
+    },
+    {
+        "linha": 4,
+        "tokens": [
+            {
+                "tipo": "MEM",
+                "nome": "MEN",
+                "valor": "0.0"
+            }
+        ],
+        "resultado": null
+    },
+    {
+        "linha": 5,
+        "tokens": [
+            {
                 "tipo": "NUM",
                 "valor": "1.5"
             },
@@ -60,7 +97,7 @@
         "resultado": 0.3333333333333333
     },
     {
-        "linha": 3,
+        "linha": 6,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -73,7 +110,7 @@
         "resultado": 8.14
     },
     {
-        "linha": 4,
+        "linha": 7,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -91,7 +128,7 @@
         "resultado": 3.0
     },
     {
-        "linha": 5,
+        "linha": 8,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -109,7 +146,7 @@
         "resultado": 1.0
     },
     {
-        "linha": 6,
+        "linha": 9,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -127,43 +164,7 @@
         "resultado": 49.0
     },
     {
-        "linha": 7,
-        "tokens": [
-            {
-                "tipo": "NUM",
-                "valor": "3.14"
-            },
-            {
-                "tipo": "NUM",
-                "valor": "5.0"
-            },
-            {
-                "tipo": "OP",
-                "valor": "+"
-            }
-        ],
-        "resultado": 8.14
-    },
-    {
-        "linha": 8,
-        "tokens": [
-            {
-                "tipo": "NUM",
-                "valor": "3.14"
-            },
-            {
-                "tipo": "NUM",
-                "valor": "5.0"
-            },
-            {
-                "tipo": "OP",
-                "valor": "+"
-            }
-        ],
-        "resultado": 8.14
-    },
-    {
-        "linha": 9,
+        "linha": 10,
         "tokens": [
             {
                 "tipo": "NUM",

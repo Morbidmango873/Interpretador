@@ -54,9 +54,17 @@ def executarExpressao(dados):
                     pilha.append(aplicarOperador(a, b, token["valor"]))
 
             elif tipo == "MEM":
-                # salva na memória usando 'nome' como chave e 'valor' como conteúdo
-                memoria[token["nome"]] = float(token["valor"])
-                eh_store = True
+                nome = token["nome"]
+
+                if pilha:
+                    # STORE (salva o valor da pilha)
+                    valor = pilha.pop()
+                    memoria[nome] = valor
+                    eh_store = True
+                else:
+                    # GET (recupera da memória)
+                    valor = memoria.get(nome, 0.0)
+                    pilha.append(valor)
 
             elif tipo == "RES":
                 # o índice é o último NUM empilhado (já está na pilha)
