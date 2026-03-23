@@ -100,10 +100,10 @@
             },
             {
                 "tipo": "OP",
-                "valor": "/"
+                "valor": "//"
             }
         ],
-        "resultado": 3.5
+        "resultado": 3.0
     },
     {
         "linha": 6,

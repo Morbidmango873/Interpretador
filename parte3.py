@@ -234,11 +234,100 @@ def estrutura_op_divisao(label: str, step: int) -> str:
     )
 
 
+def estrutura_op_divisao_inteira(label: str, step: int) -> str:
+    """
+    Divisão inteira //:  pop b, pop a, a // b, push resultado.
+    Diferente da divisao (/), NAO escala o dividendo antes de dividir.
+    Ex: 700 // 300 = 2  (= 7.00 // 3.00 com escala x100)
+    """
+    lbl_loop = f"idiv_loop_{label}_{step}"
+    lbl_fim  = f"idiv_fim_{label}_{step}"
+    return (
+        f"    @ OPERACAO DIVISAO INTEIRA // (step {step})\n"
+        + estrutura_pop(label, "r1", "r4", "r5")   # r1 = divisor
+        + estrutura_pop(label, "r2", "r4", "r5")   # r2 = dividendo
+        + f"    MOV r3, #0\n"
+        + f"{lbl_loop}:\n"
+        + f"    CMP r2, r1\n"
+        + f"    BLT {lbl_fim}\n"
+        + f"    SUB r2, r2, r1\n"
+        + f"    ADD r3, r3, #1\n"
+        + f"    B   {lbl_loop}\n"
+        + f"{lbl_fim}:\n"
+        + estrutura_push(label, "r3", "r4", "r5")
+    )
+
+
+def estrutura_op_potencia(label: str, step: int) -> str:
+    """
+    Potência por multiplicação repetida: pop exp, pop base, base^exp, push.
+    O expoente é desescalado (/100) para obter o inteiro real antes do loop.
+    Ex: 2.0^3 → base=200, exp=300 → desescala exp: 300/100=3 → 200*200*200/100/100 = 800 (=8.00)
+    Cada multiplicação normaliza por 100 para manter a escala correta.
+    Expoente 0 retorna 100 (= 1.0 em escala x100).
+    Apenas expoentes inteiros positivos são suportados.
+    """
+    lbl_deesc   = f"pow_deesc_{label}_{step}"    # loop desescalar expoente
+    lbl_deesc_f = f"pow_deesc_fim_{label}_{step}"
+    lbl_loop    = f"pow_loop_{label}_{step}"     # loop de multiplicação
+    lbl_fim     = f"pow_fim_{label}_{step}"
+
+    return (
+        f"    @ OPERACAO POTENCIA ^ (step {step})\n"
+        + estrutura_pop(label, "r1", "r4", "r5")   # r1 = expoente escalado
+        + estrutura_pop(label, "r2", "r4", "r5")   # r2 = base escalada
+        # Desescala o expoente: r1 = r1 / 100
+        + f"    @ Desescala expoente: r1 = r1 / {ESCALA}\n"
+        + f"    MOV r6, r1              @ r6 = expoente escalado\n"
+        + f"    MOV r1, #0              @ r1 = contador (expoente real)\n"
+        + f"    MOV r8, #{ESCALA}       @ r8 = divisor (escala)\n"
+        + f"{lbl_deesc}:\n"
+        + f"    CMP r6, r8\n"
+        + f"    BLT {lbl_deesc_f}\n"
+        + f"    SUB r6, r6, r8\n"
+        + f"    ADD r1, r1, #1\n"
+        + f"    B   {lbl_deesc}\n"
+        + f"{lbl_deesc_f}:              @ r1 = expoente inteiro real\n"
+        # Caso especial: exp = 0 → resultado = 1.0 (= 100 em escala)
+        + f"    CMP r1, #0\n"
+        + f"    BNE {lbl_loop}\n"
+        + f"    MOV r3, #{ESCALA}       @ base^0 = 1.0\n"
+        + f"    B   {lbl_fim}\n"
+        # Loop: acumula em r3, multiplicando por base a cada iteração
+        + f"{lbl_loop}:\n"
+        + f"    MOV r3, r2              @ r3 = base (primeiro valor)\n"
+        + f"    SUB r1, r1, #1          @ desconta a primeira base\n"
+        + f"    @ Loop: multiplica r3 por base (r2) mais r1 vezes\n"
+        + f"pow_mul_{label}_{step}:\n"
+        + f"    CMP r1, #0\n"
+        + f"    BEQ {lbl_fim}\n"
+        + f"    MOV r9, r3\n"
+        + f"    MUL r3, r2, r9          @ r3 = r3 * base\n"
+        # Normaliza após cada multiplicação
+        + f"    MOV r6, r3              @ dividendo\n"
+        + f"    MOV r7, #{ESCALA}       @ divisor\n"
+        + f"    MOV r3, #0\n"
+        + f"pow_norm_{label}_{step}:\n"
+        + f"    CMP r6, r7\n"
+        + f"    BLT pow_norm_fim_{label}_{step}\n"
+        + f"    SUB r6, r6, r7\n"
+        + f"    ADD r3, r3, #1\n"
+        + f"    B   pow_norm_{label}_{step}\n"
+        + f"pow_norm_fim_{label}_{step}:\n"
+        + f"    SUB r1, r1, #1\n"
+        + f"    B   pow_mul_{label}_{step}\n"
+        + f"{lbl_fim}:\n"
+        + estrutura_push(label, "r3", "r4", "r5")
+    )
+
+
 OPERADORES_PILHA = {
-    "+": estrutura_op_soma,
-    "-": estrutura_op_subtracao,
-    "*": estrutura_op_multiplicacao,
-    "/": estrutura_op_divisao,
+    "+":  estrutura_op_soma,
+    "-":  estrutura_op_subtracao,
+    "*":  estrutura_op_multiplicacao,
+    "/":  estrutura_op_divisao,
+    "//": estrutura_op_divisao_inteira,
+    "^":  estrutura_op_potencia,
 }
 
 
@@ -369,6 +458,28 @@ def gerarassembly(json_data: dict) -> None:
 # RPN: 6.0 2.0 *  →  600 * 200 = 120000
 # ══════════════════════════════════════════════════════════════
 
+# ══════════════════════════════════════════════════════════════
+# EXEMPLO DE USO
+# Linha 1: 3.0 4.0 +        = 7.00       → result = 700
+# Linha 2: 1.5 2.0 * 1.0 + 3.0 4.0 * /
+#          = (3.0+1.0)/12.0 = 0.33       → result = 33
+# Linha 3: 6.0 2.0 *        = 12.00      → result = 1200
+# Linha 4: 7.0 3.0 //       = 2.00       → result = 2
+# Linha 5: 2.0 3.0 ^        = 8.00       → result = 800
+# Linha 6: 3.0 2.0 ^ 1.0 +  = (9.0+1.0) = 10.00 → result = 1000
+# ══════════════════════════════════════════════════════════════
+
+# ══════════════════════════════════════════════════════════════
+# EXEMPLO DE USO
+# Linha 1: 3.0 4.0 +               = 7.00   → result = 700
+# Linha 2: 1.5 2.0 * 1.0 + 3.0 4.0 * /
+#          = (3.0+1.0)/12.0 = 0.33 → result = 33
+# Linha 3: 6.0 2.0 *               = 12.00  → result = 1200
+# Linha 4: 7.0 3.0 //              = 2.00   → result = 2
+# Linha 5: 2.0 3.0 ^               = 8.00   → result = 800
+# Linha 6: 3.0 2.0 ^ 1.0 +         = 10.00  → result = 1000
+# ══════════════════════════════════════════════════════════════
+
 if __name__ == "__main__":
     dados = {
         "linhas": [
@@ -400,6 +511,32 @@ if __name__ == "__main__":
                     {"tipo": "NUM", "valor": "6.0"},
                     {"tipo": "NUM", "valor": "2.0"},
                     {"tipo": "OP",  "valor": "*"}
+                ]
+            },
+            {
+                "linha": 4,
+                "tokens": [
+                    {"tipo": "NUM", "valor": "7.0"},
+                    {"tipo": "NUM", "valor": "3.0"},
+                    {"tipo": "OP",  "valor": "//"}
+                ]
+            },
+            {
+                "linha": 5,
+                "tokens": [
+                    {"tipo": "NUM", "valor": "2.0"},
+                    {"tipo": "NUM", "valor": "3.0"},
+                    {"tipo": "OP",  "valor": "^"}
+                ]
+            },
+            {
+                "linha": 6,
+                "tokens": [
+                    {"tipo": "NUM", "valor": "3.0"},
+                    {"tipo": "NUM", "valor": "2.0"},
+                    {"tipo": "OP",  "valor": "^"},
+                    {"tipo": "NUM", "valor": "1.0"},
+                    {"tipo": "OP",  "valor": "+"}
                 ]
             }
         ]

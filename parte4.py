@@ -2,7 +2,6 @@ import json, sys
 from parte1 import parseExpressao
 from parte2 import executarExpressao
 from teste import testar_lexer
-from parte3 import gerarCodigoAssembly
 
 testar_lexer()
 # LEITURA DO ARQUIVO
