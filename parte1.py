@@ -1,5 +1,46 @@
 import json
 
+
+def valorSemantico(token):
+    if token["tipo"] == "MEM":
+        return token.get("valor", f"MEM({token['nome']})")
+    if token["tipo"] == "RES":
+        return token.get("valor", "RES")
+    return str(token["valor"])
+
+
+def pilhaSemantica(tokens):
+    pilha = []
+
+    for token in tokens:
+        tipo = token["tipo"]
+
+        if tipo in ("NUM", "SUBEXP", "MEM"):
+            pilha.append(valorSemantico(token))
+        elif tipo == "RES":
+            if not pilha:
+                raise ValueError("RES sem índice numérico precedente")
+            indice = pilha.pop()
+            pilha.append(f"RES({indice})")
+        elif tipo == "OP":
+            if len(pilha) < 2:
+                raise ValueError(f"Operador {token['valor']!r} exige 2 operandos")
+            direito = pilha.pop()
+            esquerdo = pilha.pop()
+            pilha.append(f"({esquerdo} {token['valor']} {direito})")
+
+    return pilha
+
+
+def especialValidoSemOperador(tokens):
+    if len(tokens) == 1 and tokens[0]["tipo"] in ("NUM", "MEM", "RES", "SUBEXP"):
+        return True
+
+    if len(tokens) == 2 and tokens[0]["tipo"] == "NUM" and tokens[1]["tipo"] in ("MEM", "RES"):
+        return True
+
+    return False
+
 #Nome do Grupo: Francisco Hauch Cardoso, ID: Morbidmango873
 
 
@@ -85,17 +126,7 @@ def estadoNumero(linha, index, tokens, pilha, buffer):
 
 # ESTADO OPERADOR
 def estadoOperador(linha, index, tokens, pilha, op):
-
-    valores_consumidos = set()
-    for t in tokens:
-        if t["tipo"] == "OP":
-            valores_consumidos.add(str(t["esquerdo"]))
-            valores_consumidos.add(str(t["direito"]))
-
-    operandos = [
-        t for t in tokens
-        if t["tipo"] in ("NUM", "SUBEXP") and str(t["valor"]) not in valores_consumidos
-    ]
+    operandos = pilhaSemantica(tokens)
 
     if len(operandos) < 2:
         raise ValueError(
@@ -103,8 +134,8 @@ def estadoOperador(linha, index, tokens, pilha, op):
             f"encontrado(s): {len(operandos)}"
         )
 
-    esq = operandos[-2]["valor"]
-    dir = operandos[-1]["valor"]
+    esq = operandos[-2]
+    dir = operandos[-1]
 
     novo_token = {"tipo": "OP", "valor": op, "esquerdo": esq, "direito": dir}
 
@@ -149,7 +180,8 @@ def estadoRES(linha, index, tokens, pilha, buffer):
     if not nums:
         raise ValueError(f"[pos {index}] RES sem índice numérico precedente")
 
-    return estadoFechaEspecial(linha, index, tokens + [{"tipo": "RES"}], pilha)
+    indice = nums[-1]["valor"]
+    return estadoFechaEspecial(linha, index, tokens + [{"tipo": "RES", "valor": f"RES({indice})"}], pilha)
 
 
 # ESTADO MEM — acumula letras maiúsculas recursivamente até acabar o nome
@@ -161,10 +193,7 @@ def estadoMEM(linha, index, tokens, pilha, buffer):
     if index < len(linha) and linha[index].islower():
         raise ValueError(f"[pos {index}] Nome inválido {buffer!r} — letras minúsculas não permitidas")
 
-    nums = [t for t in tokens if t["tipo"] == "NUM"]
-    valor = nums[-1]["valor"] if nums else "0.0"
-
-    return estadoFechaEspecial(linha, index, tokens + [{"tipo": "MEM", "nome": buffer,}], pilha)
+    return estadoFechaEspecial(linha, index, tokens + [{"tipo": "MEM", "nome": buffer, "valor": f"MEM({buffer})"}], pilha)
 
 
 # ESTADO FECHA ESPECIAL — drena espaços e ')' após RES ou MEM e encerra
@@ -176,14 +205,18 @@ def estadoFechaEspecial(linha, index, tokens, pilha):
     ch = linha[index]
 
     if ch == ' ':
-        return estadoFechaEspecial(linha, index + 1, tokens, pilha)
+        return estadoInicial(linha, index + 1, tokens, pilha)
 
     if ch == ')':
-        if not pilha:
-            raise ValueError(f"[pos {index}] ')' sem '(' correspondente")
-        return estadoFechaEspecial(linha, index + 1, tokens, pilha[:-1])
+        return estadoFechaParentese(linha, index + 1, tokens, pilha)
 
-    raise ValueError(f"[pos {index}] Token especial deve ser o último da linha")
+    if ch == '/' and index + 1 < len(linha) and linha[index + 1] == '/':
+        return estadoOperador(linha, index + 2, tokens, pilha, '//')
+
+    if ch in ('+', '-', '*', '/', '%', '^'):
+        return estadoOperador(linha, index + 1, tokens, pilha, ch)
+
+    raise ValueError(f"[pos {index}] Caractere inesperado após token especial: {ch!r}")
 
 
 # ESTADO ABRE PARÊNTESE
@@ -196,9 +229,9 @@ def estadoAbreParentese(linha, index, tokens, pilha):
             valores_consumidos.add(str(t["direito"]))
 
     fechados  = [t for t in tokens if t["tipo"] == "OP" or
-                 (t["tipo"] in ("NUM", "SUBEXP") and str(t["valor"]) in valores_consumidos)]
-    pendentes = [t for t in tokens if t["tipo"] in ("NUM", "SUBEXP") and
-                 str(t["valor"]) not in valores_consumidos]
+                 (t["tipo"] in ("NUM", "SUBEXP", "MEM", "RES") and valorSemantico(t) in valores_consumidos)]
+    pendentes = [t for t in tokens if t["tipo"] in ("NUM", "SUBEXP", "MEM", "RES") and
+                 valorSemantico(t) not in valores_consumidos]
 
     novo_contexto = {"fechados": fechados, "pendentes": pendentes}
 
@@ -212,19 +245,27 @@ def estadoFechaParentese(linha, index, tokens, pilha):
         raise ValueError(f"[pos {index}] ')' sem '(' correspondente")
 
     ops_internos = [t for t in tokens if t["tipo"] == "OP"]
-    if not ops_internos:
-        raise ValueError(f"[pos {index}] Parêntese sem operador dentro")
+    operandos_finais = pilhaSemantica(tokens)
+    if not operandos_finais:
+        raise ValueError(f"[pos {index}] Parêntese vazio")
+    if len(operandos_finais) != 1 and not especialValidoSemOperador(tokens):
+        raise ValueError(f"[pos {index}] Conteúdo inválido dentro dos parênteses")
 
     ctx = pilha[-1]
 
     tokens_pai = ctx["fechados"]
     for t in tokens:
-        if t["tipo"] in ("NUM", "OP"):
+        if t["tipo"] in ("NUM", "OP", "MEM", "RES"):
             tokens_pai = tokens_pai + [t]
     tokens_pai = tokens_pai + ctx["pendentes"]
 
-    ultimo_op  = ops_internos[-1]
-    subexp_val = f"({ultimo_op['esquerdo']} {ultimo_op['valor']} {ultimo_op['direito']})"
+    if ops_internos:
+        ultimo_op  = ops_internos[-1]
+        subexp_val = f"({ultimo_op['esquerdo']} {ultimo_op['valor']} {ultimo_op['direito']})"
+    elif len(tokens) == 2 and tokens[0]["tipo"] == "NUM" and tokens[1]["tipo"] == "MEM":
+        subexp_val = f"({tokens[0]['valor']} MEM({tokens[1]['nome']}))"
+    else:
+        subexp_val = f"({operandos_finais[0]})"
     tokens_pai = tokens_pai + [{"tipo": "SUBEXP", "valor": subexp_val}]
 
     return estadoInicial(linha, index, tokens_pai, pilha[:-1])

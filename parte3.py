@@ -251,7 +251,6 @@ OPERADORES_PILHA = {
     "^":  estrutura_op_potencia,
 }
 
-
 # GERADOR MEM
 
 def gerar_bloco_mem(linha: int, tokens: list[dict]) -> tuple[list, list, str] | None:
@@ -319,7 +318,7 @@ def gerar_bloco_res(linha: int, tokens: list[dict], todas_linhas: list[int]) -> 
 
 # GERADOR RPN
 
-def gerar_bloco_rpn(linha: int, tokens: list[dict]) -> tuple[list, list, str] | None:
+def gerar_bloco_rpn(linha: int, tokens: list[dict], todas_linhas: list[int]) -> tuple[list, list, str] | None:
     label   = f"linha{linha}"
     rpn_str = " ".join(t.get("valor", t.get("tipo","")) for t in tokens)
 
@@ -333,8 +332,9 @@ def gerar_bloco_rpn(linha: int, tokens: list[dict]) -> tuple[list, list, str] | 
     codigo     = f"@ --- Linha {linha} | RPN: {rpn_str} ---\n"
     step       = 0
     cst_idx    = 0
+    profundidade_pilha = 0
 
-    for token in tokens:
+    for idx, token in enumerate(tokens):
         tipo  = token["tipo"]
         valor = token.get("valor", "")
 
@@ -346,10 +346,58 @@ def gerar_bloco_rpn(linha: int, tokens: list[dict]) -> tuple[list, list, str] | 
             codigo += f"    @ PUSH {val}\n"
             codigo += estrutura_vldr("d0", cst_nome)
             codigo += f"    VPUSH {{d0}}\n"
+            profundidade_pilha += 1
+
+        elif tipo == "MEM":
+            nome_mem = token.get("nome", "").strip()
+            if not nome_mem:
+                print(f"[Linha {linha}] Erro: MEM sem nome.")
+                return None
+
+            eh_store = idx == len(tokens) - 1 and profundidade_pilha > 0
+            if eh_store:
+                codigo += f"    @ STORE MEM {nome_mem}\n"
+                codigo += f"    VPOP  {{d0}}\n"
+                codigo += estrutura_vstr("d0", f"mem_{nome_mem}")
+                codigo += f"    VPUSH {{d0}}\n"
+            else:
+                codigo += f"    @ LOAD MEM {nome_mem}\n"
+                codigo += estrutura_vldr("d0", f"mem_{nome_mem}")
+                codigo += f"    VPUSH {{d0}}\n"
+                profundidade_pilha += 1
+
+        elif tipo == "RES":
+            if profundidade_pilha < 1:
+                print(f"[Linha {linha}] Erro: RES sem índice na pilha.")
+                return None
+
+            num_token = next(
+                (tokens[j] for j in range(idx - 1, -1, -1) if tokens[j].get("tipo") == "NUM"),
+                None
+            )
+            if num_token is None:
+                print(f"[Linha {linha}] Erro: RES sem valor numérico.")
+                return None
+
+            n = int(float(num_token["valor"]))
+            indice_alvo = len(todas_linhas) - n
+            if indice_alvo < 0 or indice_alvo >= len(todas_linhas):
+                print(f"[Linha {linha}] Erro: RES({n}) aponta para linha inexistente.")
+                return None
+
+            linha_alvo = todas_linhas[indice_alvo]
+            codigo += f"    @ LOAD RES({n}) -> result_linha{linha_alvo}\n"
+            codigo += f"    VPOP  {{d7}}\n"
+            codigo += estrutura_vldr("d0", f"result_linha{linha_alvo}")
+            codigo += f"    VPUSH {{d0}}\n"
 
         elif tipo == "OP":
+            if profundidade_pilha < 2:
+                print(f"[Linha {linha}] Erro: operandos insuficientes para '{valor}'.")
+                return None
             codigo += OPERADORES_PILHA[valor](label, step)
             step   += 1
+            profundidade_pilha -= 1
 
     codigo += f"    @ Resultado final -> result_{label}\n"
     codigo += f"    VPOP  {{d0}}\n"
@@ -393,18 +441,11 @@ def gerarassembly(json_data) -> None:
         linha  = entrada.get("linha", i + 1)
         tokens = entrada.get("tokens", [])
 
-        tem_mem = any(t.get("tipo") == "MEM" for t in tokens)
-        tem_res = any(t.get("tipo") == "RES" for t in tokens)
+        for t in tokens:
+            if t.get("tipo") == "MEM" and t.get("nome"):
+                nomes_mem.add(t["nome"].strip())
 
-        if tem_mem:
-            for t in tokens:
-                if t.get("tipo") == "MEM" and t.get("nome"):
-                    nomes_mem.add(t["nome"].strip())
-            resultado = gerar_bloco_mem(linha, tokens)
-        elif tem_res:
-            resultado = gerar_bloco_res(linha, tokens, linhas_processadas)
-        else:
-            resultado = gerar_bloco_rpn(linha, tokens)
+        resultado = gerar_bloco_rpn(linha, tokens, linhas_processadas)
 
         if resultado is None:
             continue
