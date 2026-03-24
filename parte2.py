@@ -1,5 +1,6 @@
 import struct
 
+#Nome do Grupo: Francisco Hauch Cardoso, ID: Morbidmango873
 
 def formatarResultado(valor):
     if valor is None:

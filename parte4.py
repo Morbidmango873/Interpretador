@@ -3,12 +3,16 @@ from parte1 import parseExpressao
 from parte2 import executarExpressao
 from parte3 import gerarassembly
 
+
+#Nome do Grupo: Francisco Hauch Cardoso, ID: Morbidmango873
+
 # LEITURA DO ARQUIVO
 def lerArquivo(caminho):
 
     with open(caminho, "r", encoding="utf-8") as f:
         linhas = f.readlines()
-    if len(linhas) < 15:
+    #Maximo de Linhas 10
+    if len(linhas) < 11:
         linhas_limpas = []
         for linha in linhas:
             limpa = linha.strip()
@@ -21,6 +25,7 @@ def lerArquivo(caminho):
         return linhas_limpas
     else:
         print("Arquivo muito grande")
+        sys.exit()
 
 
 def exibirResultados(resultados):

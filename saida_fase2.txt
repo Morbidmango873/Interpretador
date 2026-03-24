@@ -55,6 +55,16 @@
         "linha": 5,
         "tokens": [
             {
+                "tipo": "MEM",
+                "nome": "MENOR"
+            }
+        ],
+        "resultado": 0.0
+    },
+    {
+        "linha": 6,
+        "tokens": [
+            {
                 "tipo": "NUM",
                 "valor": "1.5"
             },
@@ -94,7 +104,7 @@
         "resultado": 0.3333333333333333
     },
     {
-        "linha": 6,
+        "linha": 7,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -104,10 +114,10 @@
                 "tipo": "RES"
             }
         ],
-        "resultado": 2.0
+        "resultado": 0.0
     },
     {
-        "linha": 7,
+        "linha": 8,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -125,7 +135,7 @@
         "resultado": 3.0
     },
     {
-        "linha": 8,
+        "linha": 9,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -143,7 +153,7 @@
         "resultado": 1.0
     },
     {
-        "linha": 9,
+        "linha": 10,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -159,23 +169,5 @@
             }
         ],
         "resultado": 49.0
-    },
-    {
-        "linha": 10,
-        "tokens": [
-            {
-                "tipo": "NUM",
-                "valor": "3.14"
-            },
-            {
-                "tipo": "NUM",
-                "valor": "5.0"
-            },
-            {
-                "tipo": "OP",
-                "valor": "+"
-            }
-        ],
-        "resultado": 8.14
     }
 ]

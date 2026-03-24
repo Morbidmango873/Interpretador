@@ -1,5 +1,8 @@
 import json
 
+
+#Nome do Grupo: Francisco Hauch Cardoso, ID: Morbidmango873
+
 # CONFIGURAÇÃO
 
 MAX_EXPRESSOES = 10

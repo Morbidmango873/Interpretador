@@ -51,6 +51,15 @@
         "linha": 5,
         "tokens": [
             {
+                "tipo": "MEM",
+                "nome": "MENOR"
+            }
+        ]
+    },
+    {
+        "linha": 6,
+        "tokens": [
+            {
                 "tipo": "NUM",
                 "valor": "1.5"
             },
@@ -89,7 +98,7 @@
         ]
     },
     {
-        "linha": 6,
+        "linha": 7,
         "tokens": [
             {
                 "tipo": "NUM",
@@ -97,23 +106,6 @@
             },
             {
                 "tipo": "RES"
-            }
-        ]
-    },
-    {
-        "linha": 7,
-        "tokens": [
-            {
-                "tipo": "NUM",
-                "valor": "7.0"
-            },
-            {
-                "tipo": "NUM",
-                "valor": "2.0"
-            },
-            {
-                "tipo": "OP",
-                "valor": "//"
             }
         ]
     },
@@ -130,7 +122,7 @@
             },
             {
                 "tipo": "OP",
-                "valor": "%"
+                "valor": "//"
             }
         ]
     },
@@ -147,7 +139,7 @@
             },
             {
                 "tipo": "OP",
-                "valor": "^"
+                "valor": "%"
             }
         ]
     },
@@ -156,15 +148,15 @@
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "3.14"
+                "valor": "7.0"
             },
             {
                 "tipo": "NUM",
-                "valor": "5.0"
+                "valor": "2.0"
             },
             {
                 "tipo": "OP",
-                "valor": "+"
+                "valor": "^"
             }
         ]
     }
