@@ -1,5 +1,7 @@
 import json
 
+#Nome do Grupo: Francisco Hauch Cardoso, ID: Morbidmango873
+
 
 def valorSemantico(token):
     if token["tipo"] == "MEM":
@@ -40,10 +42,6 @@ def especialValidoSemOperador(tokens):
         return True
 
     return False
-
-#Nome do Grupo: Francisco Hauch Cardoso, ID: Morbidmango873
-
-
 
 # ENTRADA — única interface externa, chamada pela parte4
 def parseExpressao(linhas):
