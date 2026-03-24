@@ -74,11 +74,15 @@ linha1:
     LDR r0, =result_linha1
     VLDR d0, [r0]
     VMOV r6, r7, d0
+    BL apagar_leds
     MOV r0, r6
     BL exibir_leds_32
+    BL apagar_leds
     BL marcar_separador_led
+    BL apagar_leds
     MOV r0, r7
     BL exibir_leds_32
+    BL apagar_leds
 
 @ ------------------------------------------------------------
 @ FIM LINHA 1 | INICIO LINHA 2
@@ -95,11 +99,15 @@ linha2:
     LDR r0, =result_linha2
     VLDR d0, [r0]
     VMOV r6, r7, d0
+    BL apagar_leds
     MOV r0, r6
     BL exibir_leds_32
+    BL apagar_leds
     BL marcar_separador_led
+    BL apagar_leds
     MOV r0, r7
     BL exibir_leds_32
+    BL apagar_leds
 
 @ ------------------------------------------------------------
 @ FIM LINHA 2 | INICIO LINHA 3
@@ -118,11 +126,15 @@ linha3:
     LDR r0, =result_linha3
     VLDR d0, [r0]
     VMOV r6, r7, d0
+    BL apagar_leds
     MOV r0, r6
     BL exibir_leds_32
+    BL apagar_leds
     BL marcar_separador_led
+    BL apagar_leds
     MOV r0, r7
     BL exibir_leds_32
+    BL apagar_leds
 
 @ ------------------------------------------------------------
 @ FIM LINHA 3 | INICIO LINHA 4
@@ -139,11 +151,15 @@ linha4:
     LDR r0, =result_linha4
     VLDR d0, [r0]
     VMOV r6, r7, d0
+    BL apagar_leds
     MOV r0, r6
     BL exibir_leds_32
+    BL apagar_leds
     BL marcar_separador_led
+    BL apagar_leds
     MOV r0, r7
     BL exibir_leds_32
+    BL apagar_leds
 
 @ ------------------------------------------------------------
 @ FIM LINHA 4 | INICIO LINHA 5
@@ -160,11 +176,15 @@ linha5:
     LDR r0, =result_linha5
     VLDR d0, [r0]
     VMOV r6, r7, d0
+    BL apagar_leds
     MOV r0, r6
     BL exibir_leds_32
+    BL apagar_leds
     BL marcar_separador_led
+    BL apagar_leds
     MOV r0, r7
     BL exibir_leds_32
+    BL apagar_leds
 
 @ ------------------------------------------------------------
 @ FIM LINHA 5 | INICIO LINHA 6
@@ -221,11 +241,15 @@ linha6:
     LDR r0, =result_linha6
     VLDR d0, [r0]
     VMOV r6, r7, d0
+    BL apagar_leds
     MOV r0, r6
     BL exibir_leds_32
+    BL apagar_leds
     BL marcar_separador_led
+    BL apagar_leds
     MOV r0, r7
     BL exibir_leds_32
+    BL apagar_leds
 
 @ ------------------------------------------------------------
 @ FIM LINHA 6 | INICIO LINHA 7
@@ -242,11 +266,15 @@ linha7:
     LDR r0, =result_linha7
     VLDR d0, [r0]
     VMOV r6, r7, d0
+    BL apagar_leds
     MOV r0, r6
     BL exibir_leds_32
+    BL apagar_leds
     BL marcar_separador_led
+    BL apagar_leds
     MOV r0, r7
     BL exibir_leds_32
+    BL apagar_leds
 
 @ ------------------------------------------------------------
 @ FIM LINHA 7 | INICIO LINHA 8
@@ -278,11 +306,15 @@ linha8:
     LDR r0, =result_linha8
     VLDR d0, [r0]
     VMOV r6, r7, d0
+    BL apagar_leds
     MOV r0, r6
     BL exibir_leds_32
+    BL apagar_leds
     BL marcar_separador_led
+    BL apagar_leds
     MOV r0, r7
     BL exibir_leds_32
+    BL apagar_leds
 
 @ ------------------------------------------------------------
 @ FIM LINHA 8 | INICIO LINHA 9
@@ -316,11 +348,15 @@ linha9:
     LDR r0, =result_linha9
     VLDR d0, [r0]
     VMOV r6, r7, d0
+    BL apagar_leds
     MOV r0, r6
     BL exibir_leds_32
+    BL apagar_leds
     BL marcar_separador_led
+    BL apagar_leds
     MOV r0, r7
     BL exibir_leds_32
+    BL apagar_leds
 
 @ ------------------------------------------------------------
 @ FIM LINHA 9 | INICIO LINHA 10
@@ -368,11 +404,15 @@ pow_fim_linha10_0:
     LDR r0, =result_linha10
     VLDR d0, [r0]
     VMOV r6, r7, d0
+    BL apagar_leds
     MOV r0, r6
     BL exibir_leds_32
+    BL apagar_leds
     BL marcar_separador_led
+    BL apagar_leds
     MOV r0, r7
     BL exibir_leds_32
+    BL apagar_leds
 
 @ --- Encerramento do programa ---
     BL apagar_leds
@@ -381,13 +421,6 @@ pow_fim_linha10_0:
     SWI 0
 
 @ --- Rotinas de exibicao nos LEDs do CPUlator ---
-delay_leds:
-    LDR r1, =1000000
-delay_leds_loop:
-    SUBS r1, r1, #1
-    BNE delay_leds_loop
-    BX lr
-
 apagar_leds:
     LDR r1, =4280287232
     MOV r0, #0
@@ -395,24 +428,12 @@ apagar_leds:
     BX lr
 
 marcar_separador_led:
-    PUSH {lr}
     LDR r1, =4280287232
     MOV r0, #1              @ acende 1 LED como separador
     STR r0, [r1]
-    BL delay_leds
-    MOV r2, #0
-    STR r2, [r1]
-    BL delay_leds
-    POP {lr}
     BX lr
 
 exibir_leds_32:
-    PUSH {lr}
     LDR r1, =4280287232
     STR r0, [r1]
-    BL delay_leds
-    MOV r2, #0
-    STR r2, [r1]
-    BL delay_leds
-    POP {lr}
     BX lr

@@ -7,7 +7,6 @@ import json
 
 MAX_EXPRESSOES = 10
 LED_BASE = 0xFF200000
-DELAY_LED = 1000000
 
 
 # ESTRUTURAS PADRÃO DO ASSEMBLY
@@ -111,47 +110,33 @@ def estrutura_exibir_led_resultado(variavel: str) -> str:
         f"    LDR r0, ={variavel}\n"
         f"    VLDR d0, [r0]\n"
         f"    VMOV r6, r7, d0\n"
+        f"    BL apagar_leds\n"
         f"    MOV r0, r6\n"
         f"    BL exibir_leds_32\n"
+        f"    BL apagar_leds\n"
         f"    BL marcar_separador_led\n"
+        f"    BL apagar_leds\n"
         f"    MOV r0, r7\n"
         f"    BL exibir_leds_32\n"
+        f"    BL apagar_leds\n"
     )
 
 def estrutura_rotinas_leds() -> str:
     return (
         f"\n@ --- Rotinas de exibicao nos LEDs do CPUlator ---\n"
-        f"delay_leds:\n"
-        f"    LDR r1, ={DELAY_LED}\n"
-        f"delay_leds_loop:\n"
-        f"    SUBS r1, r1, #1\n"
-        f"    BNE delay_leds_loop\n"
-        f"    BX lr\n\n"
         f"apagar_leds:\n"
         f"    LDR r1, ={LED_BASE}\n"
         f"    MOV r0, #0\n"
         f"    STR r0, [r1]\n"
         f"    BX lr\n\n"
         f"marcar_separador_led:\n"
-        f"    PUSH {{lr}}\n"
         f"    LDR r1, ={LED_BASE}\n"
         f"    MOV r0, #1              @ acende 1 LED como separador\n"
         f"    STR r0, [r1]\n"
-        f"    BL delay_leds\n"
-        f"    MOV r2, #0\n"
-        f"    STR r2, [r1]\n"
-        f"    BL delay_leds\n"
-        f"    POP {{lr}}\n"
         f"    BX lr\n\n"
         f"exibir_leds_32:\n"
-        f"    PUSH {{lr}}\n"
         f"    LDR r1, ={LED_BASE}\n"
         f"    STR r0, [r1]\n"
-        f"    BL delay_leds\n"
-        f"    MOV r2, #0\n"
-        f"    STR r2, [r1]\n"
-        f"    BL delay_leds\n"
-        f"    POP {{lr}}\n"
         f"    BX lr\n"
     )
 
@@ -454,20 +439,3 @@ def gerarassembly(json_data) -> None:
         f.write(conteudo)
 
     print(f"Assembly gerado com sucesso -> '{nome_arquivo}' ({len(blocos)} expressões)")
-
-
-# LEITURA DO JSON — lê de saida_fase1.txt
-
-def ler_json_arquivo(caminho: str = "saida_fase1.txt") -> dict | None:
-    try:
-        with open(caminho, "r", encoding="utf-8") as f:
-            dados = json.load(f)
-        print(f"JSON carregado de '{caminho}'")
-        return dados
-    except FileNotFoundError:
-        print(f"Arquivo '{caminho}' não encontrado.")
-        return None
-    except json.JSONDecodeError as e:
-        print(f"Erro ao decodificar JSON: {e}")
-        return None
-
