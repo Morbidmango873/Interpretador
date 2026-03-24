@@ -47,9 +47,17 @@
             {
                 "tipo": "MEM",
                 "nome": "MEN"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "5.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "*"
             }
         ],
-        "resultado": 2.0
+        "resultado": 10.0
     },
     {
         "linha": 5,
@@ -66,6 +74,10 @@
         "tokens": [
             {
                 "tipo": "NUM",
+                "valor": "1.0"
+            },
+            {
+                "tipo": "NUM",
                 "valor": "1.5"
             },
             {
@@ -75,10 +87,6 @@
             {
                 "tipo": "OP",
                 "valor": "*"
-            },
-            {
-                "tipo": "NUM",
-                "valor": "1.0"
             },
             {
                 "tipo": "OP",

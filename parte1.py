@@ -253,20 +253,10 @@ def estadoFechaParentese(linha, index, tokens, pilha):
 
     ctx = pilha[-1]
 
-    tokens_pai = ctx["fechados"]
+    tokens_pai = ctx["fechados"] + ctx["pendentes"]
     for t in tokens:
         if t["tipo"] in ("NUM", "OP", "MEM", "RES"):
             tokens_pai = tokens_pai + [t]
-    tokens_pai = tokens_pai + ctx["pendentes"]
-
-    if ops_internos:
-        ultimo_op  = ops_internos[-1]
-        subexp_val = f"({ultimo_op['esquerdo']} {ultimo_op['valor']} {ultimo_op['direito']})"
-    elif len(tokens) == 2 and tokens[0]["tipo"] == "NUM" and tokens[1]["tipo"] == "MEM":
-        subexp_val = f"({tokens[0]['valor']} MEM({tokens[1]['nome']}))"
-    else:
-        subexp_val = f"({operandos_finais[0]})"
-    tokens_pai = tokens_pai + [{"tipo": "SUBEXP", "valor": subexp_val}]
 
     return estadoInicial(linha, index, tokens_pai, pilha[:-1])
 

@@ -8,11 +8,13 @@
     cst_linha1_0: .double 3.1400000000
     cst_linha1_1: .double 5.0000000000
     cst_linha3_0: .double 2.0000000000
-    cst_linha6_0: .double 1.5000000000
-    cst_linha6_1: .double 2.0000000000
-    cst_linha6_2: .double 1.0000000000
+    cst_linha4_0: .double 5.0000000000
+    cst_linha6_0: .double 1.0000000000
+    cst_linha6_1: .double 1.5000000000
+    cst_linha6_2: .double 2.0000000000
     cst_linha6_3: .double 3.0000000000
     cst_linha6_4: .double 4.0000000000
+    cst_linha7_0: .double 2.0000000000
     cst_linha8_0: .double 7.0000000000
     cst_linha8_1: .double 2.0000000000
     cst_linha9_0: .double 7.0000000000
@@ -90,9 +92,13 @@ linha1:
 
 
 linha2:
-@ --- Linha 2 | MEM LEITURA: MEN ---
+@ --- Linha 2 | RPN: MEM ---
+    @ LOAD MEM MEN
     LDR r0, =mem_MEN
     VLDR d0, [r0]
+    VPUSH {d0}
+    @ Resultado final -> result_linha2
+    VPOP  {d0}
     LDR r0, =result_linha2
     VSTR d0, [r0]
     @ EXIBIR result_linha2 NOS LEDS
@@ -115,11 +121,18 @@ linha2:
 
 
 linha3:
-@ --- Linha 3 | MEM ESCRITA: MEN = 2.0 ---
+@ --- Linha 3 | RPN: 2.0 MEM ---
+    @ PUSH 2.0
     LDR r0, =cst_linha3_0
     VLDR d0, [r0]
+    VPUSH {d0}
+    @ STORE MEM MEN
+    VPOP  {d0}
     LDR r0, =mem_MEN
     VSTR d0, [r0]
+    VPUSH {d0}
+    @ Resultado final -> result_linha3
+    VPOP  {d0}
     LDR r0, =result_linha3
     VSTR d0, [r0]
     @ EXIBIR result_linha3 NOS LEDS
@@ -142,9 +155,22 @@ linha3:
 
 
 linha4:
-@ --- Linha 4 | MEM LEITURA: MEN ---
+@ --- Linha 4 | RPN: MEM 5.0 * ---
+    @ LOAD MEM MEN
     LDR r0, =mem_MEN
     VLDR d0, [r0]
+    VPUSH {d0}
+    @ PUSH 5.0
+    LDR r0, =cst_linha4_0
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ MULTIPLICACAO (step 0)
+    VPOP  {d1}            @ b
+    VPOP  {d0}            @ a
+    VMUL.F64 d0, d0, d1   @ d0 = a * b
+    VPUSH {d0}
+    @ Resultado final -> result_linha4
+    VPOP  {d0}
     LDR r0, =result_linha4
     VSTR d0, [r0]
     @ EXIBIR result_linha4 NOS LEDS
@@ -167,9 +193,13 @@ linha4:
 
 
 linha5:
-@ --- Linha 5 | MEM LEITURA: MENOR ---
+@ --- Linha 5 | RPN: MEM ---
+    @ LOAD MEM MENOR
     LDR r0, =mem_MENOR
     VLDR d0, [r0]
+    VPUSH {d0}
+    @ Resultado final -> result_linha5
+    VPOP  {d0}
     LDR r0, =result_linha5
     VSTR d0, [r0]
     @ EXIBIR result_linha5 NOS LEDS
@@ -192,23 +222,23 @@ linha5:
 
 
 linha6:
-@ --- Linha 6 | RPN: 1.5 2.0 * 1.0 + 3.0 4.0 * / ---
-    @ PUSH 1.5
+@ --- Linha 6 | RPN: 1.0 1.5 2.0 * + 3.0 4.0 * / ---
+    @ PUSH 1.0
     LDR r0, =cst_linha6_0
     VLDR d0, [r0]
     VPUSH {d0}
-    @ PUSH 2.0
+    @ PUSH 1.5
     LDR r0, =cst_linha6_1
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ PUSH 2.0
+    LDR r0, =cst_linha6_2
     VLDR d0, [r0]
     VPUSH {d0}
     @ MULTIPLICACAO (step 0)
     VPOP  {d1}            @ b
     VPOP  {d0}            @ a
     VMUL.F64 d0, d0, d1   @ d0 = a * b
-    VPUSH {d0}
-    @ PUSH 1.0
-    LDR r0, =cst_linha6_2
-    VLDR d0, [r0]
     VPUSH {d0}
     @ SOMA (step 1)
     VPOP  {d1}            @ b
@@ -257,9 +287,18 @@ linha6:
 
 
 linha7:
-@ --- Linha 7 | RES(2) -> copia result_linha5 ---
+@ --- Linha 7 | RPN: 2.0 RES ---
+    @ PUSH 2.0
+    LDR r0, =cst_linha7_0
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ LOAD RES(2) -> result_linha5
+    VPOP  {d7}
     LDR r0, =result_linha5
     VLDR d0, [r0]
+    VPUSH {d0}
+    @ Resultado final -> result_linha7
+    VPOP  {d0}
     LDR r0, =result_linha7
     VSTR d0, [r0]
     @ EXIBIR result_linha7 NOS LEDS
