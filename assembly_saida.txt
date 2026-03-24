@@ -1,199 +1,85 @@
 @ ============================================================
 @ Gerado automaticamente — 10 expressao(oes)
-@ Arquitetura: ARMv7 | Escala: x100
+@ Arquitetura: ARMv7 | VFP double (registradores D)
 @ ============================================================
 
 .section .data
-    mem_MEN: .word 0
-    stack_top_linha1: .word 0
-    stack_linha1_0: .word 0
-    stack_linha1_1: .word 0
-    stack_linha1_2: .word 0
-    stack_linha1_3: .word 0
-    stack_linha1_4: .word 0
-    stack_linha1_5: .word 0
-    stack_linha1_6: .word 0
-    stack_linha1_7: .word 0
-    stack_linha1_8: .word 0
-    stack_linha1_9: .word 0
-    stack_linha1_10: .word 0
-    stack_linha1_11: .word 0
-    stack_linha1_12: .word 0
-    stack_linha1_13: .word 0
-    stack_linha1_14: .word 0
-    stack_linha1_15: .word 0
-    result_linha1: .word 0
-    result_linha2: .word 0
-    result_linha3: .word 0
-    result_linha4: .word 0
-    stack_top_linha5: .word 0
-    stack_linha5_0: .word 0
-    stack_linha5_1: .word 0
-    stack_linha5_2: .word 0
-    stack_linha5_3: .word 0
-    stack_linha5_4: .word 0
-    stack_linha5_5: .word 0
-    stack_linha5_6: .word 0
-    stack_linha5_7: .word 0
-    stack_linha5_8: .word 0
-    stack_linha5_9: .word 0
-    stack_linha5_10: .word 0
-    stack_linha5_11: .word 0
-    stack_linha5_12: .word 0
-    stack_linha5_13: .word 0
-    stack_linha5_14: .word 0
-    stack_linha5_15: .word 0
-    result_linha5: .word 0
-    result_linha6: .word 0
-    stack_top_linha7: .word 0
-    stack_linha7_0: .word 0
-    stack_linha7_1: .word 0
-    stack_linha7_2: .word 0
-    stack_linha7_3: .word 0
-    stack_linha7_4: .word 0
-    stack_linha7_5: .word 0
-    stack_linha7_6: .word 0
-    stack_linha7_7: .word 0
-    stack_linha7_8: .word 0
-    stack_linha7_9: .word 0
-    stack_linha7_10: .word 0
-    stack_linha7_11: .word 0
-    stack_linha7_12: .word 0
-    stack_linha7_13: .word 0
-    stack_linha7_14: .word 0
-    stack_linha7_15: .word 0
-    result_linha7: .word 0
-    stack_top_linha8: .word 0
-    stack_linha8_0: .word 0
-    stack_linha8_1: .word 0
-    stack_linha8_2: .word 0
-    stack_linha8_3: .word 0
-    stack_linha8_4: .word 0
-    stack_linha8_5: .word 0
-    stack_linha8_6: .word 0
-    stack_linha8_7: .word 0
-    stack_linha8_8: .word 0
-    stack_linha8_9: .word 0
-    stack_linha8_10: .word 0
-    stack_linha8_11: .word 0
-    stack_linha8_12: .word 0
-    stack_linha8_13: .word 0
-    stack_linha8_14: .word 0
-    stack_linha8_15: .word 0
-    result_linha8: .word 0
-    stack_top_linha9: .word 0
-    stack_linha9_0: .word 0
-    stack_linha9_1: .word 0
-    stack_linha9_2: .word 0
-    stack_linha9_3: .word 0
-    stack_linha9_4: .word 0
-    stack_linha9_5: .word 0
-    stack_linha9_6: .word 0
-    stack_linha9_7: .word 0
-    stack_linha9_8: .word 0
-    stack_linha9_9: .word 0
-    stack_linha9_10: .word 0
-    stack_linha9_11: .word 0
-    stack_linha9_12: .word 0
-    stack_linha9_13: .word 0
-    stack_linha9_14: .word 0
-    stack_linha9_15: .word 0
-    result_linha9: .word 0
-    stack_top_linha10: .word 0
-    stack_linha10_0: .word 0
-    stack_linha10_1: .word 0
-    stack_linha10_2: .word 0
-    stack_linha10_3: .word 0
-    stack_linha10_4: .word 0
-    stack_linha10_5: .word 0
-    stack_linha10_6: .word 0
-    stack_linha10_7: .word 0
-    stack_linha10_8: .word 0
-    stack_linha10_9: .word 0
-    stack_linha10_10: .word 0
-    stack_linha10_11: .word 0
-    stack_linha10_12: .word 0
-    stack_linha10_13: .word 0
-    stack_linha10_14: .word 0
-    stack_linha10_15: .word 0
-    result_linha10: .word 0
+    @ --- Constantes numericas ---
+    cst_linha1_0: .double 3.1400000000
+    cst_linha1_1: .double 5.0000000000
+    cst_linha3_0: .double 2.0000000000
+    cst_linha5_0: .double 1.5000000000
+    cst_linha5_1: .double 2.0000000000
+    cst_linha5_2: .double 1.0000000000
+    cst_linha5_3: .double 3.0000000000
+    cst_linha5_4: .double 4.0000000000
+    cst_linha7_0: .double 7.0000000000
+    cst_linha7_1: .double 2.0000000000
+    cst_linha8_0: .double 7.0000000000
+    cst_linha8_1: .double 2.0000000000
+    cst_linha9_0: .double 7.0000000000
+    cst_linha9_1: .double 2.0000000000
+    cst_linha10_0: .double 3.1400000000
+    cst_linha10_1: .double 5.0000000000
+
+    @ --- Resultados ---
+    result_linha1: .double 0.0
+    result_linha2: .double 0.0
+    result_linha3: .double 0.0
+    result_linha4: .double 0.0
+    result_linha5: .double 0.0
+    result_linha6: .double 0.0
+    result_linha7: .double 0.0
+    result_linha8: .double 0.0
+    result_linha9: .double 0.0
+    result_linha10: .double 0.0
+
+    @ --- Variaveis MEM globais ---
+    mem_MEN: .double 0.0
 
 .section .text
 .global _start
 
 _start:
+    @ Habilita VFP/NEON
+    VMRS r0, FPSCR
+    ORR  r0, r0, #0x00400000
+    VMSR FPSCR, r0
+
 @ --- DUMMY: absorve erro de primeira execucao ---
-    MOV r1, #1
-    MOV r2, #1
-    SUB r3, r1, r2
+    MOV r0, #0
+    MOV r1, #0
 @ --- FIM DUMMY ---
 
 
 linha1:
 @ --- Linha 1 | RPN: 3.14 5.0 + ---
-    @ PUSH #314  (= 3.14 * 100)
-    MOV r3, #314
-    @ PUSH r3
-    LDR r4, =stack_top_linha1
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha1_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha1
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ PUSH #500  (= 5.0 * 100)
-    MOV r3, #500
-    @ PUSH r3
-    LDR r4, =stack_top_linha1
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha1_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha1
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ OPERACAO SOMA (step 0)
-    @ POP -> r1
-    LDR r4, =stack_top_linha1
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha1_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r1, [r4]         @ carrega valor
-    @ POP -> r2
-    LDR r4, =stack_top_linha1
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha1_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r2, [r4]         @ carrega valor
-    ADD r3, r2, r1
-    @ PUSH r3
-    LDR r4, =stack_top_linha1
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha1_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha1
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
+    @ PUSH 3.14
+    LDR r0, =cst_linha1_0
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ PUSH 5.0
+    LDR r0, =cst_linha1_1
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ SOMA (step 0)
+    VPOP  {d1}            @ b
+    VPOP  {d0}            @ a
+    VADD.F64 d0, d0, d1   @ d0 = a + b
+    VPUSH {d0}
     @ Resultado final -> result_linha1
-    @ POP -> r3
-    LDR r4, =stack_top_linha1
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha1_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r3, [r4]         @ carrega valor
+    VPOP  {d0}
     LDR r0, =result_linha1
-    STR r3, [r0]
+    VSTR d0, [r0]
+    @ EXIBIR result_linha1 NOS LEDS
+    LDR r0, =result_linha1
+    VLDR d0, [r0]
+    VMOV r6, r7, d0
+    MOV r0, r6
+    BL exibir_leds_32
+    BL marcar_separador_led
+    MOV r0, r7
+    BL exibir_leds_32
 
 @ ------------------------------------------------------------
 @ FIM LINHA 1 | INICIO LINHA 2
@@ -203,9 +89,18 @@ linha1:
 linha2:
 @ --- Linha 2 | MEM LEITURA: MEN ---
     LDR r0, =mem_MEN
-    LDR r3, [r0]
+    VLDR d0, [r0]
     LDR r0, =result_linha2
-    STR r3, [r0]
+    VSTR d0, [r0]
+    @ EXIBIR result_linha2 NOS LEDS
+    LDR r0, =result_linha2
+    VLDR d0, [r0]
+    VMOV r6, r7, d0
+    MOV r0, r6
+    BL exibir_leds_32
+    BL marcar_separador_led
+    MOV r0, r7
+    BL exibir_leds_32
 
 @ ------------------------------------------------------------
 @ FIM LINHA 2 | INICIO LINHA 3
@@ -214,11 +109,21 @@ linha2:
 
 linha3:
 @ --- Linha 3 | MEM ESCRITA: MEN = 2.0 ---
-    MOV r3, #200
+    LDR r0, =cst_linha3_0
+    VLDR d0, [r0]
     LDR r0, =mem_MEN
-    STR r3, [r0]
+    VSTR d0, [r0]
     LDR r0, =result_linha3
-    STR r3, [r0]
+    VSTR d0, [r0]
+    @ EXIBIR result_linha3 NOS LEDS
+    LDR r0, =result_linha3
+    VLDR d0, [r0]
+    VMOV r6, r7, d0
+    MOV r0, r6
+    BL exibir_leds_32
+    BL marcar_separador_led
+    MOV r0, r7
+    BL exibir_leds_32
 
 @ ------------------------------------------------------------
 @ FIM LINHA 3 | INICIO LINHA 4
@@ -228,9 +133,18 @@ linha3:
 linha4:
 @ --- Linha 4 | MEM LEITURA: MEN ---
     LDR r0, =mem_MEN
-    LDR r3, [r0]
+    VLDR d0, [r0]
     LDR r0, =result_linha4
-    STR r3, [r0]
+    VSTR d0, [r0]
+    @ EXIBIR result_linha4 NOS LEDS
+    LDR r0, =result_linha4
+    VLDR d0, [r0]
+    VMOV r6, r7, d0
+    MOV r0, r6
+    BL exibir_leds_32
+    BL marcar_separador_led
+    MOV r0, r7
+    BL exibir_leds_32
 
 @ ------------------------------------------------------------
 @ FIM LINHA 4 | INICIO LINHA 5
@@ -239,231 +153,59 @@ linha4:
 
 linha5:
 @ --- Linha 5 | RPN: 1.5 2.0 * 1.0 + 3.0 4.0 * / ---
-    @ PUSH #150  (= 1.5 * 100)
-    MOV r3, #150
-    @ PUSH r3
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha5_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ PUSH #200  (= 2.0 * 100)
-    MOV r3, #200
-    @ PUSH r3
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha5_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ OPERACAO MULTIPLICACAO (step 0)
-    @ POP -> r1
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha5_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r1, [r4]         @ carrega valor
-    @ POP -> r2
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha5_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r2, [r4]         @ carrega valor
-    MOV r3, r1
-    MUL r3, r2, r3
-    @ NORMALIZAR escala: r3 = r3 / 100
-    MOV r1, r3              @ r1 = dividendo (resultado bruto)
-    MOV r2, #100       @ r2 = divisor (escala)
-    MOV r3, #0              @ r3 = quociente
-norm_loop_linha5_0:
-    CMP r1, r2
-    BLT norm_fim_linha5_0
-    SUB r1, r1, r2
-    ADD r3, r3, #1
-    B   norm_loop_linha5_0
-norm_fim_linha5_0:
-    @ PUSH r3
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha5_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ PUSH #100  (= 1.0 * 100)
-    MOV r3, #100
-    @ PUSH r3
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha5_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ OPERACAO SOMA (step 1)
-    @ POP -> r1
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha5_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r1, [r4]         @ carrega valor
-    @ POP -> r2
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha5_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r2, [r4]         @ carrega valor
-    ADD r3, r2, r1
-    @ PUSH r3
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha5_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ PUSH #300  (= 3.0 * 100)
-    MOV r3, #300
-    @ PUSH r3
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha5_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ PUSH #400  (= 4.0 * 100)
-    MOV r3, #400
-    @ PUSH r3
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha5_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ OPERACAO MULTIPLICACAO (step 2)
-    @ POP -> r1
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha5_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r1, [r4]         @ carrega valor
-    @ POP -> r2
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha5_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r2, [r4]         @ carrega valor
-    MOV r3, r1
-    MUL r3, r2, r3
-    @ NORMALIZAR escala: r3 = r3 / 100
-    MOV r1, r3              @ r1 = dividendo (resultado bruto)
-    MOV r2, #100       @ r2 = divisor (escala)
-    MOV r3, #0              @ r3 = quociente
-norm_loop_linha5_2:
-    CMP r1, r2
-    BLT norm_fim_linha5_2
-    SUB r1, r1, r2
-    ADD r3, r3, #1
-    B   norm_loop_linha5_2
-norm_fim_linha5_2:
-    @ PUSH r3
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha5_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ OPERACAO DIVISAO (step 3)
-    @ POP -> r1
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha5_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r1, [r4]         @ carrega valor
-    @ POP -> r2
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha5_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r2, [r4]         @ carrega valor
-    @ Escala dividendo x100 antes de dividir
-    MOV r6, #100
-    MOV r3, r2
-    MOV r2, #0
-scale_loop_linha5_3:
-    CMP r6, #0
-    BEQ scale_done_linha5_3
-    ADD r2, r2, r3
-    SUB r6, r6, #1
-    B   scale_loop_linha5_3
-scale_done_linha5_3:
-    MOV r3, #0
-div_loop_linha5_3:
-    CMP r2, r1
-    BLT div_fim_linha5_3
-    SUB r2, r2, r1
-    ADD r3, r3, #1
-    B   div_loop_linha5_3
-div_fim_linha5_3:
-    @ PUSH r3
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha5_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
+    @ PUSH 1.5
+    LDR r0, =cst_linha5_0
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ PUSH 2.0
+    LDR r0, =cst_linha5_1
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ MULTIPLICACAO (step 0)
+    VPOP  {d1}            @ b
+    VPOP  {d0}            @ a
+    VMUL.F64 d0, d0, d1   @ d0 = a * b
+    VPUSH {d0}
+    @ PUSH 1.0
+    LDR r0, =cst_linha5_2
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ SOMA (step 1)
+    VPOP  {d1}            @ b
+    VPOP  {d0}            @ a
+    VADD.F64 d0, d0, d1   @ d0 = a + b
+    VPUSH {d0}
+    @ PUSH 3.0
+    LDR r0, =cst_linha5_3
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ PUSH 4.0
+    LDR r0, =cst_linha5_4
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ MULTIPLICACAO (step 2)
+    VPOP  {d1}            @ b
+    VPOP  {d0}            @ a
+    VMUL.F64 d0, d0, d1   @ d0 = a * b
+    VPUSH {d0}
+    @ DIVISAO (step 3)
+    VPOP  {d1}            @ b (divisor)
+    VPOP  {d0}            @ a (dividendo)
+    VDIV.F64 d0, d0, d1   @ d0 = a / b
+    VPUSH {d0}
     @ Resultado final -> result_linha5
-    @ POP -> r3
-    LDR r4, =stack_top_linha5
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha5_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r3, [r4]         @ carrega valor
+    VPOP  {d0}
     LDR r0, =result_linha5
-    STR r3, [r0]
+    VSTR d0, [r0]
+    @ EXIBIR result_linha5 NOS LEDS
+    LDR r0, =result_linha5
+    VLDR d0, [r0]
+    VMOV r6, r7, d0
+    MOV r0, r6
+    BL exibir_leds_32
+    BL marcar_separador_led
+    MOV r0, r7
+    BL exibir_leds_32
 
 @ ------------------------------------------------------------
 @ FIM LINHA 5 | INICIO LINHA 6
@@ -473,9 +215,18 @@ div_fim_linha5_3:
 linha6:
 @ --- Linha 6 | RES(2) -> copia result_linha4 ---
     LDR r0, =result_linha4
-    LDR r3, [r0]
+    VLDR d0, [r0]
     LDR r0, =result_linha6
-    STR r3, [r0]
+    VSTR d0, [r0]
+    @ EXIBIR result_linha6 NOS LEDS
+    LDR r0, =result_linha6
+    VLDR d0, [r0]
+    VMOV r6, r7, d0
+    MOV r0, r6
+    BL exibir_leds_32
+    BL marcar_separador_led
+    MOV r0, r7
+    BL exibir_leds_32
 
 @ ------------------------------------------------------------
 @ FIM LINHA 6 | INICIO LINHA 7
@@ -484,76 +235,34 @@ linha6:
 
 linha7:
 @ --- Linha 7 | RPN: 7.0 2.0 // ---
-    @ PUSH #700  (= 7.0 * 100)
-    MOV r3, #700
-    @ PUSH r3
-    LDR r4, =stack_top_linha7
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha7_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha7
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ PUSH #200  (= 2.0 * 100)
-    MOV r3, #200
-    @ PUSH r3
-    LDR r4, =stack_top_linha7
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha7_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha7
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ OPERACAO DIVISAO INTEIRA // (step 0)
-    @ POP -> r1
-    LDR r4, =stack_top_linha7
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha7_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r1, [r4]         @ carrega valor
-    @ POP -> r2
-    LDR r4, =stack_top_linha7
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha7_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r2, [r4]         @ carrega valor
-    MOV r3, #0
-idiv_loop_linha7_0:
-    CMP r2, r1
-    BLT idiv_fim_linha7_0
-    SUB r2, r2, r1
-    ADD r3, r3, #1
-    B   idiv_loop_linha7_0
-idiv_fim_linha7_0:
-    @ PUSH r3
-    LDR r4, =stack_top_linha7
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha7_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha7
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
+    @ PUSH 7.0
+    LDR r0, =cst_linha7_0
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ PUSH 2.0
+    LDR r0, =cst_linha7_1
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ DIVISAO INTEIRA // (step 0)
+    VPOP  {d1}            @ b
+    VPOP  {d0}            @ a
+    VDIV.F64 d0, d0, d1   @ d0 = a / b
+    VCVT.S32.F64 s0, d0   @ trunca para inteiro
+    VCVT.F64.S32 d0, s0   @ volta para double
+    VPUSH {d0}
     @ Resultado final -> result_linha7
-    @ POP -> r3
-    LDR r4, =stack_top_linha7
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha7_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r3, [r4]         @ carrega valor
+    VPOP  {d0}
     LDR r0, =result_linha7
-    STR r3, [r0]
+    VSTR d0, [r0]
+    @ EXIBIR result_linha7 NOS LEDS
+    LDR r0, =result_linha7
+    VLDR d0, [r0]
+    VMOV r6, r7, d0
+    MOV r0, r6
+    BL exibir_leds_32
+    BL marcar_separador_led
+    MOV r0, r7
+    BL exibir_leds_32
 
 @ ------------------------------------------------------------
 @ FIM LINHA 7 | INICIO LINHA 8
@@ -562,76 +271,36 @@ idiv_fim_linha7_0:
 
 linha8:
 @ --- Linha 8 | RPN: 7.0 2.0 % ---
-    @ PUSH #700  (= 7.0 * 100)
-    MOV r3, #700
-    @ PUSH r3
-    LDR r4, =stack_top_linha8
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha8_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha8
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ PUSH #200  (= 2.0 * 100)
-    MOV r3, #200
-    @ PUSH r3
-    LDR r4, =stack_top_linha8
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha8_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha8
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ OPERACAO RESTO % (step 0)
-    @ POP -> r1
-    LDR r4, =stack_top_linha8
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha8_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r1, [r4]         @ carrega valor
-    @ POP -> r2
-    LDR r4, =stack_top_linha8
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha8_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r2, [r4]         @ carrega valor
-    @ subtrai divisor do dividendo ate nao caber mais
-mod_loop_linha8_0:
-    CMP r2, r1
-    BLT mod_fim_linha8_0
-    SUB r2, r2, r1          @ r2 -= r1
-    B   mod_loop_linha8_0
-mod_fim_linha8_0:                  @ r2 = resto
-    MOV r3, r2
-    @ PUSH r3
-    LDR r4, =stack_top_linha8
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha8_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha8
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
+    @ PUSH 7.0
+    LDR r0, =cst_linha8_0
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ PUSH 2.0
+    LDR r0, =cst_linha8_1
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ RESTO % (step 0)
+    VPOP  {d1}            @ b
+    VPOP  {d0}            @ a
+    VDIV.F64 d2, d0, d1   @ d2 = a / b
+    VCVT.S32.F64 s4, d2   @ trunca
+    VCVT.F64.S32 d2, s4   @ volta para double
+    VMUL.F64 d2, d2, d1   @ d2 = trunc(a/b) * b
+    VSUB.F64 d0, d0, d2   @ d0 = a - d2
+    VPUSH {d0}
     @ Resultado final -> result_linha8
-    @ POP -> r3
-    LDR r4, =stack_top_linha8
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha8_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r3, [r4]         @ carrega valor
+    VPOP  {d0}
     LDR r0, =result_linha8
-    STR r3, [r0]
+    VSTR d0, [r0]
+    @ EXIBIR result_linha8 NOS LEDS
+    LDR r0, =result_linha8
+    VLDR d0, [r0]
+    VMOV r6, r7, d0
+    MOV r0, r6
+    BL exibir_leds_32
+    BL marcar_separador_led
+    MOV r0, r7
+    BL exibir_leds_32
 
 @ ------------------------------------------------------------
 @ FIM LINHA 8 | INICIO LINHA 9
@@ -640,105 +309,50 @@ mod_fim_linha8_0:                  @ r2 = resto
 
 linha9:
 @ --- Linha 9 | RPN: 7.0 2.0 ^ ---
-    @ PUSH #700  (= 7.0 * 100)
-    MOV r3, #700
-    @ PUSH r3
-    LDR r4, =stack_top_linha9
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha9_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha9
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ PUSH #200  (= 2.0 * 100)
-    MOV r3, #200
-    @ PUSH r3
-    LDR r4, =stack_top_linha9
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha9_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha9
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ OPERACAO POTENCIA ^ (step 0)
-    @ POP -> r1
-    LDR r4, =stack_top_linha9
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha9_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r1, [r4]         @ carrega valor
-    @ POP -> r2
-    LDR r4, =stack_top_linha9
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha9_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r2, [r4]         @ carrega valor
-    @ Desescala expoente: r1 = r1 / 100
-    MOV r6, r1              @ r6 = expoente escalado
-    MOV r1, #0              @ r1 = contador (expoente real)
-    MOV r8, #100       @ r8 = divisor (escala)
-pow_deesc_linha9_0:
-    CMP r6, r8
-    BLT pow_deesc_fim_linha9_0
-    SUB r6, r6, r8
-    ADD r1, r1, #1
-    B   pow_deesc_linha9_0
-pow_deesc_fim_linha9_0:              @ r1 = expoente inteiro real
-    CMP r1, #0
-    BNE pow_loop_linha9_0
-    MOV r3, #100       @ base^0 = 1.0
-    B   pow_fim_linha9_0
+    @ PUSH 7.0
+    LDR r0, =cst_linha9_0
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ PUSH 2.0
+    LDR r0, =cst_linha9_1
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ POTENCIA ^ (step 0)
+    VPOP  {d1}            @ expoente
+    VPOP  {d0}            @ base
+    @ converte expoente para inteiro em r1
+    VCVT.S32.F64 s2, d1
+    VMOV r1, s2            @ r1 = expoente inteiro
+    @ caso base: exp=0 → resultado=1.0
+    CMP  r1, #0
+    BNE  pow_loop_linha9_0
+    VMOV.F64 d0, #1.0
+    B    pow_fim_linha9_0
 pow_loop_linha9_0:
-    MOV r3, r2              @ r3 = base (primeiro valor)
-    SUB r1, r1, #1          @ desconta a primeira base
-    @ Loop: multiplica r3 por base (r2) mais r1 vezes
+    VMOV.F64 d2, d0        @ d2 = base (acumulador)
+    SUB  r1, r1, #1
 pow_mul_linha9_0:
-    CMP r1, #0
-    BEQ pow_fim_linha9_0
-    MOV r9, r3
-    MUL r3, r2, r9          @ r3 = r3 * base
-    MOV r6, r3              @ dividendo
-    MOV r7, #100       @ divisor
-    MOV r3, #0
-pow_norm_linha9_0:
-    CMP r6, r7
-    BLT pow_norm_fim_linha9_0
-    SUB r6, r6, r7
-    ADD r3, r3, #1
-    B   pow_norm_linha9_0
-pow_norm_fim_linha9_0:
-    SUB r1, r1, #1
-    B   pow_mul_linha9_0
+    CMP  r1, #0
+    BEQ  pow_fim_linha9_0
+    VMUL.F64 d2, d2, d0   @ d2 *= base
+    SUB  r1, r1, #1
+    B    pow_mul_linha9_0
 pow_fim_linha9_0:
-    @ PUSH r3
-    LDR r4, =stack_top_linha9
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha9_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha9
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
+    VMOV.F64 d0, d2
+    VPUSH {d0}
     @ Resultado final -> result_linha9
-    @ POP -> r3
-    LDR r4, =stack_top_linha9
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha9_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r3, [r4]         @ carrega valor
+    VPOP  {d0}
     LDR r0, =result_linha9
-    STR r3, [r0]
+    VSTR d0, [r0]
+    @ EXIBIR result_linha9 NOS LEDS
+    LDR r0, =result_linha9
+    VLDR d0, [r0]
+    VMOV r6, r7, d0
+    MOV r0, r6
+    BL exibir_leds_32
+    BL marcar_separador_led
+    MOV r0, r7
+    BL exibir_leds_32
 
 @ ------------------------------------------------------------
 @ FIM LINHA 9 | INICIO LINHA 10
@@ -747,71 +361,72 @@ pow_fim_linha9_0:
 
 linha10:
 @ --- Linha 10 | RPN: 3.14 5.0 + ---
-    @ PUSH #314  (= 3.14 * 100)
-    MOV r3, #314
-    @ PUSH r3
-    LDR r4, =stack_top_linha10
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha10_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha10
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ PUSH #500  (= 5.0 * 100)
-    MOV r3, #500
-    @ PUSH r3
-    LDR r4, =stack_top_linha10
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha10_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha10
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
-    @ OPERACAO SOMA (step 0)
-    @ POP -> r1
-    LDR r4, =stack_top_linha10
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha10_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r1, [r4]         @ carrega valor
-    @ POP -> r2
-    LDR r4, =stack_top_linha10
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha10_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r2, [r4]         @ carrega valor
-    ADD r3, r2, r1
-    @ PUSH r3
-    LDR r4, =stack_top_linha10
-    LDR r5, [r4]        @ tmp2 = índice atual
-    LDR r4, =stack_linha10_0    @ base da pilha
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    STR r3, [r4]        @ salva valor
-    LDR r4, =stack_top_linha10
-    LDR r5, [r4]
-    ADD r5, r5, #1
-    STR r5, [r4]         @ top++
+    @ PUSH 3.14
+    LDR r0, =cst_linha10_0
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ PUSH 5.0
+    LDR r0, =cst_linha10_1
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ SOMA (step 0)
+    VPOP  {d1}            @ b
+    VPOP  {d0}            @ a
+    VADD.F64 d0, d0, d1   @ d0 = a + b
+    VPUSH {d0}
     @ Resultado final -> result_linha10
-    @ POP -> r3
-    LDR r4, =stack_top_linha10
-    LDR r5, [r4]
-    SUB r5, r5, #1
-    STR r5, [r4]         @ top--
-    LDR r4, =stack_linha10_0
-    ADD r4, r4, r5, LSL #2  @ endereço = base + top*4
-    LDR r3, [r4]         @ carrega valor
+    VPOP  {d0}
     LDR r0, =result_linha10
-    STR r3, [r0]
+    VSTR d0, [r0]
+    @ EXIBIR result_linha10 NOS LEDS
+    LDR r0, =result_linha10
+    VLDR d0, [r0]
+    VMOV r6, r7, d0
+    MOV r0, r6
+    BL exibir_leds_32
+    BL marcar_separador_led
+    MOV r0, r7
+    BL exibir_leds_32
 
 @ --- Encerramento do programa ---
+    BL apagar_leds
     MOV r7, #1
     MOV r0, #0
     SWI 0
+
+@ --- Rotinas de exibicao nos LEDs do CPUlator ---
+delay_leds:
+    LDR r1, =1000000
+delay_leds_loop:
+    SUBS r1, r1, #1
+    BNE delay_leds_loop
+    BX lr
+
+apagar_leds:
+    LDR r1, =4280287232
+    MOV r0, #0
+    STR r0, [r1]
+    BX lr
+
+marcar_separador_led:
+    PUSH {lr}
+    LDR r1, =4280287232
+    MOV r0, #1              @ acende 1 LED como separador
+    STR r0, [r1]
+    BL delay_leds
+    MOV r2, #0
+    STR r2, [r1]
+    BL delay_leds
+    POP {lr}
+    BX lr
+
+exibir_leds_32:
+    PUSH {lr}
+    LDR r1, =4280287232
+    STR r0, [r1]
+    BL delay_leds
+    MOV r2, #0
+    STR r2, [r1]
+    BL delay_leds
+    POP {lr}
+    BX lr

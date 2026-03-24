@@ -1,26 +1,26 @@
 import json, sys
 from parte1 import parseExpressao
 from parte2 import executarExpressao
-from teste import testar_lexer
 from parte3 import gerarassembly
 
-testar_lexer()
 # LEITURA DO ARQUIVO
 def lerArquivo(caminho):
 
     with open(caminho, "r", encoding="utf-8") as f:
         linhas = f.readlines()
+    if len(linhas) < 15:
+        linhas_limpas = []
+        for linha in linhas:
+            limpa = linha.strip()
+            if limpa:
+                linhas_limpas.append(limpa)
 
-    linhas_limpas = []
-    for linha in linhas:
-        limpa = linha.strip()
-        if limpa:
-            linhas_limpas.append(limpa)
+        if not linhas_limpas:
+            raise Exception("Arquivo de entrada está vazio.")
 
-    if not linhas_limpas:
-        raise Exception("Arquivo de entrada está vazio.")
-
-    return linhas_limpas
+        return linhas_limpas
+    else:
+        print("Arquivo muito grande")
 
 
 def exibirResultados(resultados):
@@ -102,10 +102,7 @@ def main():
 
 
 def ler_json_arquivo(caminho: str = "saida_fase1.txt") -> dict | None:
-    """
-    Lê o JSON de entrada do arquivo especificado.
-    Retorna o dicionário ou None se houver erro.
-    """
+
     try:
         with open(caminho, "r", encoding="utf-8") as f:
             dados = json.load(f)
