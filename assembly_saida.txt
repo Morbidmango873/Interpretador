@@ -5,22 +5,24 @@
 
 .section .data
     @ --- Constantes numericas ---
-    cst_linha1_0: .double 3.1400000000
-    cst_linha1_1: .double 5.0000000000
-    cst_linha3_0: .double 2.0000000000
-    cst_linha4_0: .double 5.0000000000
-    cst_linha6_0: .double 1.0000000000
-    cst_linha6_1: .double 1.5000000000
-    cst_linha6_2: .double 2.0000000000
-    cst_linha6_3: .double 3.0000000000
-    cst_linha6_4: .double 4.0000000000
-    cst_linha7_0: .double 2.0000000000
-    cst_linha8_0: .double 7.0000000000
-    cst_linha8_1: .double 2.0000000000
-    cst_linha9_0: .double 7.0000000000
-    cst_linha9_1: .double 2.0000000000
-    cst_linha10_0: .double 7.0000000000
-    cst_linha10_1: .double 2.0000000000
+    cst_linha1_0: .double 3153.0000000000
+    cst_linha1_1: .double 2728.0000000000
+    cst_linha2_0: .double 100.0000000000
+    cst_linha2_1: .double 3.0000000000
+    cst_linha3_0: .double 54321.0000000000
+    cst_linha3_1: .double 98765.0000000000
+    cst_linha4_0: .double 1289.0000000000
+    cst_linha4_1: .double 8.0000000000
+    cst_linha5_0: .double 7109.0000000000
+    cst_linha5_1: .double 13.0000000000
+    cst_linha6_0: .double 7609.0000000000
+    cst_linha6_1: .double 13.0000000000
+    cst_linha7_0: .double 15.0000000000
+    cst_linha7_1: .double 4.0000000000
+    cst_linha8_0: .double 22.0000000000
+    cst_linha9_0: .double 11.0000000000
+    cst_linha10_0: .double 1.0000000000
+    cst_linha10_1: .double 99.0000000000
 
     @ --- Resultados ---
     result_linha1: .double 0.0
@@ -35,8 +37,7 @@
     result_linha10: .double 0.0
 
     @ --- Variaveis MEM globais ---
-    mem_MEN: .double 0.0
-    mem_MENOR: .double 0.0
+    mem_TEMP: .double 0.0
 
 .section .text
 .global _start
@@ -54,12 +55,12 @@ _start:
 
 
 linha1:
-@ --- Linha 1 | RPN: 3.14 5.0 + ---
-    @ PUSH 3.14
+@ --- Linha 1 | RPN: 3153.0 2728.0 + ---
+    @ PUSH 3153.0
     LDR r0, =cst_linha1_0
     VLDR d0, [r0]
     VPUSH {d0}
-    @ PUSH 5.0
+    @ PUSH 2728.0
     LDR r0, =cst_linha1_1
     VLDR d0, [r0]
     VPUSH {d0}
@@ -92,10 +93,19 @@ linha1:
 
 
 linha2:
-@ --- Linha 2 | RPN: MEM ---
-    @ LOAD MEM MEN
-    LDR r0, =mem_MEN
+@ --- Linha 2 | RPN: 100.0 3.0 - ---
+    @ PUSH 100.0
+    LDR r0, =cst_linha2_0
     VLDR d0, [r0]
+    VPUSH {d0}
+    @ PUSH 3.0
+    LDR r0, =cst_linha2_1
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ SUBTRACAO (step 0)
+    VPOP  {d1}            @ b
+    VPOP  {d0}            @ a
+    VSUB.F64 d0, d0, d1   @ d0 = a - b
     VPUSH {d0}
     @ Resultado final -> result_linha2
     VPOP  {d0}
@@ -121,15 +131,19 @@ linha2:
 
 
 linha3:
-@ --- Linha 3 | RPN: 2.0 MEM ---
-    @ PUSH 2.0
+@ --- Linha 3 | RPN: 54321.0 98765.0 * ---
+    @ PUSH 54321.0
     LDR r0, =cst_linha3_0
     VLDR d0, [r0]
     VPUSH {d0}
-    @ STORE MEM MEN
-    VPOP  {d0}
-    LDR r0, =mem_MEN
-    VSTR d0, [r0]
+    @ PUSH 98765.0
+    LDR r0, =cst_linha3_1
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ MULTIPLICACAO (step 0)
+    VPOP  {d1}            @ b
+    VPOP  {d0}            @ a
+    VMUL.F64 d0, d0, d1   @ d0 = a * b
     VPUSH {d0}
     @ Resultado final -> result_linha3
     VPOP  {d0}
@@ -155,19 +169,19 @@ linha3:
 
 
 linha4:
-@ --- Linha 4 | RPN: MEM 5.0 * ---
-    @ LOAD MEM MEN
-    LDR r0, =mem_MEN
-    VLDR d0, [r0]
-    VPUSH {d0}
-    @ PUSH 5.0
+@ --- Linha 4 | RPN: 1289.0 8.0 / ---
+    @ PUSH 1289.0
     LDR r0, =cst_linha4_0
     VLDR d0, [r0]
     VPUSH {d0}
-    @ MULTIPLICACAO (step 0)
-    VPOP  {d1}            @ b
-    VPOP  {d0}            @ a
-    VMUL.F64 d0, d0, d1   @ d0 = a * b
+    @ PUSH 8.0
+    LDR r0, =cst_linha4_1
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ DIVISAO (step 0)
+    VPOP  {d1}            @ b (divisor)
+    VPOP  {d0}            @ a (dividendo)
+    VDIV.F64 d0, d0, d1   @ d0 = a / b
     VPUSH {d0}
     @ Resultado final -> result_linha4
     VPOP  {d0}
@@ -193,10 +207,21 @@ linha4:
 
 
 linha5:
-@ --- Linha 5 | RPN: MEM ---
-    @ LOAD MEM MENOR
-    LDR r0, =mem_MENOR
+@ --- Linha 5 | RPN: 7109.0 13.0 // ---
+    @ PUSH 7109.0
+    LDR r0, =cst_linha5_0
     VLDR d0, [r0]
+    VPUSH {d0}
+    @ PUSH 13.0
+    LDR r0, =cst_linha5_1
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ DIVISAO INTEIRA // (step 0)
+    VPOP  {d1}            @ b
+    VPOP  {d0}            @ a
+    VDIV.F64 d0, d0, d1   @ d0 = a / b
+    VCVT.S32.F64 s0, d0   @ trunca para inteiro
+    VCVT.F64.S32 d0, s0   @ volta para double
     VPUSH {d0}
     @ Resultado final -> result_linha5
     VPOP  {d0}
@@ -222,46 +247,23 @@ linha5:
 
 
 linha6:
-@ --- Linha 6 | RPN: 1.0 1.5 2.0 * + 3.0 4.0 * / ---
-    @ PUSH 1.0
+@ --- Linha 6 | RPN: 7609.0 13.0 % ---
+    @ PUSH 7609.0
     LDR r0, =cst_linha6_0
     VLDR d0, [r0]
     VPUSH {d0}
-    @ PUSH 1.5
+    @ PUSH 13.0
     LDR r0, =cst_linha6_1
     VLDR d0, [r0]
     VPUSH {d0}
-    @ PUSH 2.0
-    LDR r0, =cst_linha6_2
-    VLDR d0, [r0]
-    VPUSH {d0}
-    @ MULTIPLICACAO (step 0)
+    @ RESTO % (step 0)
     VPOP  {d1}            @ b
     VPOP  {d0}            @ a
-    VMUL.F64 d0, d0, d1   @ d0 = a * b
-    VPUSH {d0}
-    @ SOMA (step 1)
-    VPOP  {d1}            @ b
-    VPOP  {d0}            @ a
-    VADD.F64 d0, d0, d1   @ d0 = a + b
-    VPUSH {d0}
-    @ PUSH 3.0
-    LDR r0, =cst_linha6_3
-    VLDR d0, [r0]
-    VPUSH {d0}
-    @ PUSH 4.0
-    LDR r0, =cst_linha6_4
-    VLDR d0, [r0]
-    VPUSH {d0}
-    @ MULTIPLICACAO (step 2)
-    VPOP  {d1}            @ b
-    VPOP  {d0}            @ a
-    VMUL.F64 d0, d0, d1   @ d0 = a * b
-    VPUSH {d0}
-    @ DIVISAO (step 3)
-    VPOP  {d1}            @ b (divisor)
-    VPOP  {d0}            @ a (dividendo)
-    VDIV.F64 d0, d0, d1   @ d0 = a / b
+    VDIV.F64 d2, d0, d1   @ d2 = a / b
+    VCVT.S32.F64 s4, d2   @ trunca
+    VCVT.F64.S32 d2, s4   @ volta para double
+    VMUL.F64 d2, d2, d1   @ d2 = trunc(a/b) * b
+    VSUB.F64 d0, d0, d2   @ d0 = a - d2
     VPUSH {d0}
     @ Resultado final -> result_linha6
     VPOP  {d0}
@@ -287,15 +289,37 @@ linha6:
 
 
 linha7:
-@ --- Linha 7 | RPN: 2.0 RES ---
-    @ PUSH 2.0
+@ --- Linha 7 | RPN: 15.0 4.0 ^ ---
+    @ PUSH 15.0
     LDR r0, =cst_linha7_0
     VLDR d0, [r0]
     VPUSH {d0}
-    @ LOAD RES(2) -> result_linha5
-    VPOP  {d7}
-    LDR r0, =result_linha5
+    @ PUSH 4.0
+    LDR r0, =cst_linha7_1
     VLDR d0, [r0]
+    VPUSH {d0}
+    @ POTENCIA ^ (step 0)
+    VPOP  {d1}            @ expoente
+    VPOP  {d0}            @ base
+    @ converte expoente para inteiro em r1
+    VCVT.S32.F64 s2, d1
+    VMOV r1, s2            @ r1 = expoente inteiro
+    @ caso base: exp=0 → resultado=1.0
+    CMP  r1, #0
+    BNE  pow_loop_linha7_0
+    VMOV.F64 d0, #1.0
+    B    pow_fim_linha7_0
+pow_loop_linha7_0:
+    VMOV.F64 d2, d0        @ d2 = base (acumulador)
+    SUB  r1, r1, #1
+pow_mul_linha7_0:
+    CMP  r1, #0
+    BEQ  pow_fim_linha7_0
+    VMUL.F64 d2, d2, d0   @ d2 *= base
+    SUB  r1, r1, #1
+    B    pow_mul_linha7_0
+pow_fim_linha7_0:
+    VMOV.F64 d0, d2
     VPUSH {d0}
     @ Resultado final -> result_linha7
     VPOP  {d0}
@@ -321,21 +345,15 @@ linha7:
 
 
 linha8:
-@ --- Linha 8 | RPN: 7.0 2.0 // ---
-    @ PUSH 7.0
+@ --- Linha 8 | RPN: 22.0 MEM ---
+    @ PUSH 22.0
     LDR r0, =cst_linha8_0
     VLDR d0, [r0]
     VPUSH {d0}
-    @ PUSH 2.0
-    LDR r0, =cst_linha8_1
-    VLDR d0, [r0]
-    VPUSH {d0}
-    @ DIVISAO INTEIRA // (step 0)
-    VPOP  {d1}            @ b
-    VPOP  {d0}            @ a
-    VDIV.F64 d0, d0, d1   @ d0 = a / b
-    VCVT.S32.F64 s0, d0   @ trunca para inteiro
-    VCVT.F64.S32 d0, s0   @ volta para double
+    @ STORE MEM TEMP
+    VPOP  {d0}
+    LDR r0, =mem_TEMP
+    VSTR d0, [r0]
     VPUSH {d0}
     @ Resultado final -> result_linha8
     VPOP  {d0}
@@ -361,23 +379,19 @@ linha8:
 
 
 linha9:
-@ --- Linha 9 | RPN: 7.0 2.0 % ---
-    @ PUSH 7.0
+@ --- Linha 9 | RPN: MEM 11.0 - ---
+    @ LOAD MEM TEMP
+    LDR r0, =mem_TEMP
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ PUSH 11.0
     LDR r0, =cst_linha9_0
     VLDR d0, [r0]
     VPUSH {d0}
-    @ PUSH 2.0
-    LDR r0, =cst_linha9_1
-    VLDR d0, [r0]
-    VPUSH {d0}
-    @ RESTO % (step 0)
+    @ SUBTRACAO (step 0)
     VPOP  {d1}            @ b
     VPOP  {d0}            @ a
-    VDIV.F64 d2, d0, d1   @ d2 = a / b
-    VCVT.S32.F64 s4, d2   @ trunca
-    VCVT.F64.S32 d2, s4   @ volta para double
-    VMUL.F64 d2, d2, d1   @ d2 = trunc(a/b) * b
-    VSUB.F64 d0, d0, d2   @ d0 = a - d2
+    VSUB.F64 d0, d0, d1   @ d0 = a - b
     VPUSH {d0}
     @ Resultado final -> result_linha9
     VPOP  {d0}
@@ -403,37 +417,24 @@ linha9:
 
 
 linha10:
-@ --- Linha 10 | RPN: 7.0 2.0 ^ ---
-    @ PUSH 7.0
+@ --- Linha 10 | RPN: 1.0 RES 99.0 + ---
+    @ PUSH 1.0
     LDR r0, =cst_linha10_0
     VLDR d0, [r0]
     VPUSH {d0}
-    @ PUSH 2.0
+    @ LOAD RES(1) -> result_linha9
+    VPOP  {d7}
+    LDR r0, =result_linha9
+    VLDR d0, [r0]
+    VPUSH {d0}
+    @ PUSH 99.0
     LDR r0, =cst_linha10_1
     VLDR d0, [r0]
     VPUSH {d0}
-    @ POTENCIA ^ (step 0)
-    VPOP  {d1}            @ expoente
-    VPOP  {d0}            @ base
-    @ converte expoente para inteiro em r1
-    VCVT.S32.F64 s2, d1
-    VMOV r1, s2            @ r1 = expoente inteiro
-    @ caso base: exp=0 → resultado=1.0
-    CMP  r1, #0
-    BNE  pow_loop_linha10_0
-    VMOV.F64 d0, #1.0
-    B    pow_fim_linha10_0
-pow_loop_linha10_0:
-    VMOV.F64 d2, d0        @ d2 = base (acumulador)
-    SUB  r1, r1, #1
-pow_mul_linha10_0:
-    CMP  r1, #0
-    BEQ  pow_fim_linha10_0
-    VMUL.F64 d2, d2, d0   @ d2 *= base
-    SUB  r1, r1, #1
-    B    pow_mul_linha10_0
-pow_fim_linha10_0:
-    VMOV.F64 d0, d2
+    @ SOMA (step 0)
+    VPOP  {d1}            @ b
+    VPOP  {d0}            @ a
+    VADD.F64 d0, d0, d1   @ d0 = a + b
     VPUSH {d0}
     @ Resultado final -> result_linha10
     VPOP  {d0}
