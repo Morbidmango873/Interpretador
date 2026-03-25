@@ -4,11 +4,11 @@
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "3153.0"
+                "valor": "400.0"
             },
             {
                 "tipo": "NUM",
-                "valor": "2728.0"
+                "valor": "687.0"
             },
             {
                 "tipo": "OP",
@@ -21,11 +21,11 @@
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "100.0"
+                "valor": "945679.0"
             },
             {
                 "tipo": "NUM",
-                "valor": "3.0"
+                "valor": "16546511.0"
             },
             {
                 "tipo": "OP",
@@ -38,11 +38,11 @@
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "54321.0"
+                "valor": "123876.0"
             },
             {
                 "tipo": "NUM",
-                "valor": "98765.0"
+                "valor": "789012.0"
             },
             {
                 "tipo": "OP",
@@ -55,11 +55,11 @@
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "1289.0"
+                "valor": "8888.0"
             },
             {
                 "tipo": "NUM",
-                "valor": "8.0"
+                "valor": "9.0"
             },
             {
                 "tipo": "OP",
@@ -72,11 +72,11 @@
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "7109.0"
+                "valor": "9234521.0"
             },
             {
                 "tipo": "NUM",
-                "valor": "13.0"
+                "valor": "11.0"
             },
             {
                 "tipo": "OP",
@@ -89,11 +89,11 @@
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "7609.0"
+                "valor": "983546521.0"
             },
             {
                 "tipo": "NUM",
-                "valor": "13.0"
+                "valor": "11.0"
             },
             {
                 "tipo": "OP",
@@ -106,11 +106,11 @@
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "15.0"
+                "valor": "9.0"
             },
             {
                 "tipo": "NUM",
-                "valor": "4.0"
+                "valor": "6.0"
             },
             {
                 "tipo": "OP",
@@ -123,11 +123,11 @@
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "22.0"
+                "valor": "12641820.0"
             },
             {
                 "tipo": "MEM",
-                "nome": "TEMP"
+                "nome": "CACHE"
             }
         ]
     },
@@ -136,15 +136,15 @@
         "tokens": [
             {
                 "tipo": "MEM",
-                "nome": "TEMP"
+                "nome": "CACHER"
             },
             {
                 "tipo": "NUM",
-                "valor": "11.0"
+                "valor": "10.0"
             },
             {
                 "tipo": "OP",
-                "valor": "-"
+                "valor": "/"
             }
         ]
     },
@@ -160,11 +160,11 @@
             },
             {
                 "tipo": "NUM",
-                "valor": "99.0"
+                "valor": "2.0"
             },
             {
                 "tipo": "OP",
-                "valor": "+"
+                "valor": "^"
             }
         ]
     }
