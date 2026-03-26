@@ -37,8 +37,10 @@ def estrutura_secao_data(constantes: list[tuple[str, float]],
     """
     linhas = [".section .data\n"]
 
+    linhas.append("    @ --- Constantes numericas ---\n")
+    linhas.append("    cst_zero_f64: .double 0.0\n")
+
     if constantes:
-        linhas.append("    @ --- Constantes numericas ---\n")
         for nome, valor in constantes:
             linhas.append(f"    {nome}: .double {valor:.10f}\n")
 
@@ -240,7 +242,8 @@ def estrutura_op_potencia(label: str, step: int) -> str:
         f"    SUB  r1, r1, #1\n"
         f"    B    pow_mul_{label}_{step}\n"
         f"{lbl_invalido}:\n"
-        f"    VMOV.F64 d2, #0.0\n"
+        f"    LDR r0, =cst_zero_f64\n"
+        f"    VLDR d2, [r0]\n"
         f"{lbl_fim}:\n"
         f"    VMOV.F64 d0, d2\n"
         f"    VPUSH {{d0}}\n"

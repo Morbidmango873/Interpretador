@@ -4,97 +4,147 @@
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "400.0"
+                "valor": "3153.0"
             },
             {
                 "tipo": "NUM",
-                "valor": "6.87"
+                "valor": "2728.0"
             },
             {
                 "tipo": "OP",
                 "valor": "+"
             }
         ],
-        "resultado": 406.87
+        "resultado": 5881.0
     },
     {
         "linha": 2,
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "945679.0"
+                "valor": "100.0"
             },
             {
                 "tipo": "NUM",
-                "valor": "1654651.1"
+                "valor": "3.0"
             },
             {
                 "tipo": "OP",
                 "valor": "-"
             }
         ],
-        "resultado": -708972.1000000001
+        "resultado": 97.0
     },
     {
         "linha": 3,
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "123876.0"
+                "valor": "54321.0"
             },
             {
                 "tipo": "NUM",
-                "valor": "789.12"
+                "valor": "98765.0"
             },
             {
                 "tipo": "OP",
                 "valor": "*"
             }
         ],
-        "resultado": 97753029.12
+        "resultado": 5365013565.0
     },
     {
         "linha": 4,
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "8888.0"
+                "valor": "1289.0"
             },
             {
                 "tipo": "NUM",
-                "valor": "9.0"
+                "valor": "8.0"
             },
             {
                 "tipo": "OP",
                 "valor": "/"
             }
         ],
-        "resultado": 987.5555555555555
+        "resultado": 161.125
     },
     {
         "linha": 5,
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "92345.21"
+                "valor": "7109.0"
             },
             {
                 "tipo": "NUM",
-                "valor": "11.0"
+                "valor": "13.0"
             },
             {
                 "tipo": "OP",
                 "valor": "//"
             }
         ],
-        "resultado": 8395.0
+        "resultado": 546.0
     },
     {
         "linha": 6,
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "9835465.21"
+                "valor": "7609.0"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "13.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "%"
+            }
+        ],
+        "resultado": 4.0
+    },
+    {
+        "linha": 7,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "15.0"
+            },
+            {
+                "tipo": "NUM",
+                "valor": "4.0"
+            },
+            {
+                "tipo": "OP",
+                "valor": "^"
+            }
+        ],
+        "resultado": 50625.0
+    },
+    {
+        "linha": 8,
+        "tokens": [
+            {
+                "tipo": "NUM",
+                "valor": "22.0"
+            },
+            {
+                "tipo": "MEM",
+                "nome": "TEMP"
+            }
+        ],
+        "resultado": 22.0
+    },
+    {
+        "linha": 9,
+        "tokens": [
+            {
+                "tipo": "MEM",
+                "nome": "TEMP"
             },
             {
                 "tipo": "NUM",
@@ -102,60 +152,10 @@
             },
             {
                 "tipo": "OP",
-                "valor": "%"
+                "valor": "-"
             }
         ],
-        "resultado": 2.0
-    },
-    {
-        "linha": 7,
-        "tokens": [
-            {
-                "tipo": "NUM",
-                "valor": "9.0"
-            },
-            {
-                "tipo": "NUM",
-                "valor": "6.0"
-            },
-            {
-                "tipo": "OP",
-                "valor": "^"
-            }
-        ],
-        "resultado": 531441.0
-    },
-    {
-        "linha": 8,
-        "tokens": [
-            {
-                "tipo": "NUM",
-                "valor": "126418.2"
-            },
-            {
-                "tipo": "MEM",
-                "nome": "CACHE"
-            }
-        ],
-        "resultado": 126418.2
-    },
-    {
-        "linha": 9,
-        "tokens": [
-            {
-                "tipo": "MEM",
-                "nome": "CACHER"
-            },
-            {
-                "tipo": "NUM",
-                "valor": "10.0"
-            },
-            {
-                "tipo": "OP",
-                "valor": "/"
-            }
-        ],
-        "resultado": 0.0
+        "resultado": 11.0
     },
     {
         "linha": 10,
@@ -169,13 +169,13 @@
             },
             {
                 "tipo": "NUM",
-                "valor": "2.0"
+                "valor": "99.0"
             },
             {
                 "tipo": "OP",
-                "valor": "^"
+                "valor": "+"
             }
         ],
-        "resultado": 0.0
+        "resultado": 110.0
     }
 ]
