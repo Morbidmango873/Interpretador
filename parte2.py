@@ -1,6 +1,6 @@
 import struct
 
-#Nome do Grupo: Francisco Hauch Cardoso, ID: Morbidmango873
+# Nome do Grupo: Francisco Hauch Cardoso, ID: Morbidmango873
 
 def formatarResultado(valor):
     if valor is None:
@@ -58,17 +58,18 @@ def executarExpressao(dados):
                 nome = token["nome"]
 
                 if pilha:
-                    # STORE (salva o valor da pilha)
-                    valor = pilha.pop()
+                    # STORE (salva o valor da pilha e mantém na pilha)
+                    valor = pilha[-1]          # lê o topo sem remover
                     memoria[nome] = valor
                     eh_store = True
+                    # NÃO faz pop — o valor permanece na pilha
+                    # como resultado final da linha
                 else:
                     # GET (recupera da memória)
                     valor = memoria.get(nome, 0.0)
                     pilha.append(valor)
 
             elif tipo == "RES":
-                # o índice é o último NUM empilhado (já está na pilha)
                 if not pilha:
                     raise Exception(f"[Linha {linha['linha']}] RES sem índice na pilha")
                 n = int(pilha.pop())
@@ -98,9 +99,8 @@ def executarExpressao(dados):
         else:
             raise Exception(f"[Linha {linha['linha']}] Pilha inválida ao final: {pilha}")
 
-        # MEM puro não entra no histórico (não produz resultado numérico)
-        if not eh_store:
-            historico.append(resultado_final)
+        # todas as linhas entram no histórico, inclusive MEM store
+        historico.append(resultado_final)
 
         resultados.append({
             "linha"    : linha["linha"],
