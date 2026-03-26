@@ -23,6 +23,8 @@ def aplicarOperador(a, b, op):
     elif op == "%":
         return int(a) % int(b)
     elif op == "^":
+        if not float(b).is_integer() or b <= 0:
+            raise Exception("Potenciação exige expoente inteiro positivo")
         return a ** b
     else:
         raise Exception(f"Operador desconhecido: {op}")

@@ -3,8 +3,7 @@ import sys
 import os
 from parte1 import parseExpressao
 from parte2 import executarExpressao
-from parte3 import gerarassembly
-
+from parte3 import gerarAssembly
 # Nome do Grupo: Francisco Hauch Cardoso, ID: Morbidmango873
 
 # CONSTANTES
@@ -124,7 +123,6 @@ def lerJsonArquivo(caminho: str = "saida_fase1.txt") -> list | dict | None:
 # PONTO DE ENTRADA
 
 def main() -> None:
-
     # --- validação do argumento de linha de comando ---
     if len(sys.argv) < 2:
         print("Uso: python parte4.py <arquivo_de_entrada.txt>")
@@ -142,18 +140,17 @@ def main() -> None:
 
     print(f"{len(linhas)} linha(s) carregada(s).")
 
-    # --- fase 1: análise léxica (AFD) ---
-    print("\n[Fase 1] Análise léxica...")
+    # --- Parte 1: análise léxica (AFD) ---
+    print("\n[Parte 1] Análise léxica...")
     try:
         tokens_por_linha = parseExpressao(linhas)
     except Exception as e:
-        print(f"Erro na Fase 1: {e}")
+        print(f"Erro na Parte 1: {e}")
         sys.exit(1)
 
-    print("[Fase 1] Concluída. Tokens salvos em 'saida_fase1.txt'.")
+    print("[Parte 1] Concluída. Tokens salvos em 'saida_fase1.txt'.")
 
-    # --- fase 1.5: geração de Assembly (usa o JSON de tokens) ---
-    print("\n[Fase 1.5] Gerando Assembly ARMv7...")
+    print("\n[Parte 3] Gerando Assembly ARMv7...")
     dados_tokens = lerJsonArquivo("saida_fase1.txt")
 
     if dados_tokens is None:
@@ -161,7 +158,7 @@ def main() -> None:
         sys.exit(1)
 
     try:
-        gerarassembly(dados_tokens)
+        gerarAssembly(dados_tokens)
     except Exception as e:
         print(f"Erro na geração de Assembly: {e}")
         sys.exit(1)

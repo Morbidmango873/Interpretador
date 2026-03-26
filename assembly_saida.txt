@@ -6,20 +6,20 @@
 .section .data
     @ --- Constantes numericas ---
     cst_linha1_0: .double 400.0000000000
-    cst_linha1_1: .double 687.0000000000
+    cst_linha1_1: .double 6.8700000000
     cst_linha2_0: .double 945679.0000000000
-    cst_linha2_1: .double 16546511.0000000000
+    cst_linha2_1: .double 1654651.1000000001
     cst_linha3_0: .double 123876.0000000000
-    cst_linha3_1: .double 789012.0000000000
+    cst_linha3_1: .double 789.1200000000
     cst_linha4_0: .double 8888.0000000000
     cst_linha4_1: .double 9.0000000000
-    cst_linha5_0: .double 9234521.0000000000
+    cst_linha5_0: .double 92345.2100000000
     cst_linha5_1: .double 11.0000000000
-    cst_linha6_0: .double 983546521.0000000000
+    cst_linha6_0: .double 9835465.2100000009
     cst_linha6_1: .double 11.0000000000
     cst_linha7_0: .double 9.0000000000
     cst_linha7_1: .double 6.0000000000
-    cst_linha8_0: .double 12641820.0000000000
+    cst_linha8_0: .double 126418.2000000000
     cst_linha9_0: .double 10.0000000000
     cst_linha10_0: .double 1.0000000000
     cst_linha10_1: .double 2.0000000000
@@ -56,12 +56,12 @@ _start:
 
 
 linha1:
-@ --- Linha 1 | RPN: 400.0 687.0 + ---
+@ --- Linha 1 | RPN: 400.0 6.87 + ---
     @ PUSH 400.0
     LDR r0, =cst_linha1_0
     VLDR d0, [r0]
     VPUSH {d0}
-    @ PUSH 687.0
+    @ PUSH 6.87
     LDR r0, =cst_linha1_1
     VLDR d0, [r0]
     VPUSH {d0}
@@ -94,12 +94,12 @@ linha1:
 
 
 linha2:
-@ --- Linha 2 | RPN: 945679.0 16546511.0 - ---
+@ --- Linha 2 | RPN: 945679.0 1654651.1 - ---
     @ PUSH 945679.0
     LDR r0, =cst_linha2_0
     VLDR d0, [r0]
     VPUSH {d0}
-    @ PUSH 16546511.0
+    @ PUSH 1654651.1
     LDR r0, =cst_linha2_1
     VLDR d0, [r0]
     VPUSH {d0}
@@ -132,12 +132,12 @@ linha2:
 
 
 linha3:
-@ --- Linha 3 | RPN: 123876.0 789012.0 * ---
+@ --- Linha 3 | RPN: 123876.0 789.12 * ---
     @ PUSH 123876.0
     LDR r0, =cst_linha3_0
     VLDR d0, [r0]
     VPUSH {d0}
-    @ PUSH 789012.0
+    @ PUSH 789.12
     LDR r0, =cst_linha3_1
     VLDR d0, [r0]
     VPUSH {d0}
@@ -208,8 +208,8 @@ linha4:
 
 
 linha5:
-@ --- Linha 5 | RPN: 9234521.0 11.0 // ---
-    @ PUSH 9234521.0
+@ --- Linha 5 | RPN: 92345.21 11.0 // ---
+    @ PUSH 92345.21
     LDR r0, =cst_linha5_0
     VLDR d0, [r0]
     VPUSH {d0}
@@ -248,8 +248,8 @@ linha5:
 
 
 linha6:
-@ --- Linha 6 | RPN: 983546521.0 11.0 % ---
-    @ PUSH 983546521.0
+@ --- Linha 6 | RPN: 9835465.21 11.0 % ---
+    @ PUSH 9835465.21
     LDR r0, =cst_linha6_0
     VLDR d0, [r0]
     VPUSH {d0}
@@ -302,14 +302,17 @@ linha7:
     @ POTENCIA ^ (step 0)
     VPOP  {d1}            @ expoente
     VPOP  {d0}            @ base
-    @ converte expoente para inteiro em r1
+    @ valida se o expoente e inteiro
     VCVT.S32.F64 s2, d1
+    VCVT.F64.S32 d3, s2
+    VCMP.F64 d1, d3
+    VMRS APSR_nzcv, FPSCR
+    BNE  pow_invalido_linha7_0
     VMOV r1, s2            @ r1 = expoente inteiro
-    @ caso base: exp=0 → resultado=1.0
-    CMP  r1, #0
-    BNE  pow_loop_linha7_0
-    VMOV.F64 d0, #1.0
-    B    pow_fim_linha7_0
+    @ aceita apenas expoente positivo
+    CMP  r1, #1
+    BLT  pow_invalido_linha7_0
+    B    pow_loop_linha7_0
 pow_loop_linha7_0:
     VMOV.F64 d2, d0        @ d2 = base (acumulador)
     SUB  r1, r1, #1
@@ -319,6 +322,8 @@ pow_mul_linha7_0:
     VMUL.F64 d2, d2, d0   @ d2 *= base
     SUB  r1, r1, #1
     B    pow_mul_linha7_0
+pow_invalido_linha7_0:
+    VMOV.F64 d2, #0.0
 pow_fim_linha7_0:
     VMOV.F64 d0, d2
     VPUSH {d0}
@@ -346,8 +351,8 @@ pow_fim_linha7_0:
 
 
 linha8:
-@ --- Linha 8 | RPN: 12641820.0 MEM ---
-    @ PUSH 12641820.0
+@ --- Linha 8 | RPN: 126418.2 MEM ---
+    @ PUSH 126418.2
     LDR r0, =cst_linha8_0
     VLDR d0, [r0]
     VPUSH {d0}
@@ -435,14 +440,17 @@ linha10:
     @ POTENCIA ^ (step 0)
     VPOP  {d1}            @ expoente
     VPOP  {d0}            @ base
-    @ converte expoente para inteiro em r1
+    @ valida se o expoente e inteiro
     VCVT.S32.F64 s2, d1
+    VCVT.F64.S32 d3, s2
+    VCMP.F64 d1, d3
+    VMRS APSR_nzcv, FPSCR
+    BNE  pow_invalido_linha10_0
     VMOV r1, s2            @ r1 = expoente inteiro
-    @ caso base: exp=0 → resultado=1.0
-    CMP  r1, #0
-    BNE  pow_loop_linha10_0
-    VMOV.F64 d0, #1.0
-    B    pow_fim_linha10_0
+    @ aceita apenas expoente positivo
+    CMP  r1, #1
+    BLT  pow_invalido_linha10_0
+    B    pow_loop_linha10_0
 pow_loop_linha10_0:
     VMOV.F64 d2, d0        @ d2 = base (acumulador)
     SUB  r1, r1, #1
@@ -452,6 +460,8 @@ pow_mul_linha10_0:
     VMUL.F64 d2, d2, d0   @ d2 *= base
     SUB  r1, r1, #1
     B    pow_mul_linha10_0
+pow_invalido_linha10_0:
+    VMOV.F64 d2, #0.0
 pow_fim_linha10_0:
     VMOV.F64 d0, d2
     VPUSH {d0}

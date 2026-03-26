@@ -8,14 +8,14 @@
             },
             {
                 "tipo": "NUM",
-                "valor": "687.0"
+                "valor": "6.87"
             },
             {
                 "tipo": "OP",
                 "valor": "+"
             }
         ],
-        "resultado": 1087.0
+        "resultado": 406.87
     },
     {
         "linha": 2,
@@ -26,14 +26,14 @@
             },
             {
                 "tipo": "NUM",
-                "valor": "16546511.0"
+                "valor": "1654651.1"
             },
             {
                 "tipo": "OP",
                 "valor": "-"
             }
         ],
-        "resultado": -15600832.0
+        "resultado": -708972.1000000001
     },
     {
         "linha": 3,
@@ -44,14 +44,14 @@
             },
             {
                 "tipo": "NUM",
-                "valor": "789012.0"
+                "valor": "789.12"
             },
             {
                 "tipo": "OP",
                 "valor": "*"
             }
         ],
-        "resultado": 97739650512.0
+        "resultado": 97753029.12
     },
     {
         "linha": 4,
@@ -76,7 +76,7 @@
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "9234521.0"
+                "valor": "92345.21"
             },
             {
                 "tipo": "NUM",
@@ -87,14 +87,14 @@
                 "valor": "//"
             }
         ],
-        "resultado": 839501.0
+        "resultado": 8395.0
     },
     {
         "linha": 6,
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "983546521.0"
+                "valor": "9835465.21"
             },
             {
                 "tipo": "NUM",
@@ -105,7 +105,7 @@
                 "valor": "%"
             }
         ],
-        "resultado": 1.0
+        "resultado": 2.0
     },
     {
         "linha": 7,
@@ -130,14 +130,14 @@
         "tokens": [
             {
                 "tipo": "NUM",
-                "valor": "12641820.0"
+                "valor": "126418.2"
             },
             {
                 "tipo": "MEM",
                 "nome": "CACHE"
             }
         ],
-        "resultado": null
+        "resultado": 126418.2
     },
     {
         "linha": 9,

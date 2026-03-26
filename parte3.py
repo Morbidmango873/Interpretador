@@ -209,23 +209,27 @@ def estrutura_op_resto(label: str, step: int) -> str:
 def estrutura_op_potencia(label: str, step: int) -> str:
     """
     Potência por multiplicação repetida.
-    Expoente desescalado para inteiro via VCVT.
+    Aceita apenas expoente inteiro positivo.
     Loop: decrementa r1 e multiplica d0 por d2 a cada passo.
     """
     lbl_loop = f"pow_loop_{label}_{step}"
     lbl_fim  = f"pow_fim_{label}_{step}"
+    lbl_invalido = f"pow_invalido_{label}_{step}"
     return (
         f"    @ POTENCIA ^ (step {step})\n"
         f"    VPOP  {{d1}}            @ expoente\n"
         f"    VPOP  {{d0}}            @ base\n"
-        f"    @ converte expoente para inteiro em r1\n"
+        f"    @ valida se o expoente e inteiro\n"
         f"    VCVT.S32.F64 s2, d1\n"
+        f"    VCVT.F64.S32 d3, s2\n"
+        f"    VCMP.F64 d1, d3\n"
+        f"    VMRS APSR_nzcv, FPSCR\n"
+        f"    BNE  {lbl_invalido}\n"
         f"    VMOV r1, s2            @ r1 = expoente inteiro\n"
-        f"    @ caso base: exp=0 → resultado=1.0\n"
-        f"    CMP  r1, #0\n"
-        f"    BNE  {lbl_loop}\n"
-        f"    VMOV.F64 d0, #1.0\n"
-        f"    B    {lbl_fim}\n"
+        f"    @ aceita apenas expoente positivo\n"
+        f"    CMP  r1, #1\n"
+        f"    BLT  {lbl_invalido}\n"
+        f"    B    {lbl_loop}\n"
         f"{lbl_loop}:\n"
         f"    VMOV.F64 d2, d0        @ d2 = base (acumulador)\n"
         f"    SUB  r1, r1, #1\n"
@@ -235,6 +239,8 @@ def estrutura_op_potencia(label: str, step: int) -> str:
         f"    VMUL.F64 d2, d2, d0   @ d2 *= base\n"
         f"    SUB  r1, r1, #1\n"
         f"    B    pow_mul_{label}_{step}\n"
+        f"{lbl_invalido}:\n"
+        f"    VMOV.F64 d2, #0.0\n"
         f"{lbl_fim}:\n"
         f"    VMOV.F64 d0, d2\n"
         f"    VPUSH {{d0}}\n"
@@ -358,7 +364,7 @@ def extrair_entradas(json_data) -> list[dict]:
     return [entrada for entrada in entradas if isinstance(entrada, dict)]
 
 
-def gerarassembly(json_data) -> None:
+def gerarAssembly(json_data) -> None:
     entradas = extrair_entradas(json_data)
 
     if len(entradas) > MAX_EXPRESSOES:
