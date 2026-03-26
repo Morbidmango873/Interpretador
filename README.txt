@@ -101,15 +101,14 @@ O projeto aceita os seguintes operadores:
 
 Comportamento atual:
 
-- +, -, *, / usam valores float em Python e instrucoes VFP double no Assembly
-- // converte os operandos para inteiro no executor Python e, no Assembly, divide e trunca
-- % usa resto sobre inteiros no Python e, no Assembly, usa a formula a - trunc(a/b) * b
+- +, -, * e / usam float64 no executor Python e instrucoes VFP double no Assembly
+- / agora trata explicitamente casos IEEE 754 sensiveis, inclusive divisao por zero com geracao de NaN ou infinito com sinal
+- // agora arredonda o quociente em ponto flutuante segundo o modo IEEE configurado no codigo, sem converter previamente os operandos para int
+- % agora usa a identidade a - q*b com q arredondado pelo mesmo modo IEEE configurado
+- NAN, INF e INFINITY podem ser usados como literais numericos de entrada
 - ^ aceita apenas expoente inteiro positivo
 
-Observacao importante:
-
-O projeto usa double precision em varios pontos, mas nao implementa integralmente todos os aspectos da norma IEEE 754. Ele se aproxima da representacao em ponto flutuante, mas mantem regras proprias para operadores como //, % e ^.
-
+O projeto passou a preservar e documentar explicitamente NaN, infinito, subnormais, overflow, underflow e modos de arredondamento, dentro do suporte disponivel em Python float64 e no VFP ARMv7.
 
 6. MEMORIA COM MEM
 
@@ -189,6 +188,7 @@ Objetivo:
 - reconhecer numeros, operadores, MEM, RES e parenteses
 - validar erros sintaticos simples
 - salvar os tokens em JSON
+- Seguir o padrão de Maquina de estado Finito
 
 Principais funcoes:
 
@@ -266,7 +266,7 @@ Observacoes:
 
 - os resultados sao armazenados em historico para uso posterior por RES
 - uma linha com STORE em MEM tambem entra no historico
-- o executor usa float do Python para os calculos principais
+- o executor usa float64 do Python, com tratamento explicito para NaN, infinito, subnormais e divisao por zero
 
 
 10. PARTE 3 - GERACAO DE ASSEMBLY ARMv7
@@ -464,41 +464,9 @@ Explicacao de dois casos importantes:
 - linha 10 usa RES(1), portanto recupera o resultado da linha 9, que foi 0.0. Em seguida calcula 0.0 ^ 2.0, resultando em 0.0.
 
 
-14. LIMITACOES ATUAIS DO PROJETO
-
-O sistema funciona corretamente dentro da linguagem proposta, mas possui limitacoes importantes:
-
-- aceita apenas numeros positivos na entrada
-- nao aceita notacao cientifica
-- identificadores de memoria devem usar letras maiusculas
-- a potencia aceita apenas expoente inteiro positivo
-- a divisao inteira e o resto seguem regras definidas pelo projeto, nao uma semantica completa de IEEE 754
-- a geracao de constantes no Assembly usa formatacao decimal fixa
-- o projeto nao implementa explicitamente tratamento de NaN, infinito, subnormais, overflow, underflow e modos de arredondamento
-
-
-15. RELACAO COM IEEE 754
-
-O projeto se aproxima do uso de ponto flutuante IEEE 754 nos seguintes aspectos:
-
-- uso de float/double para representar valores
-- uso de operacoes VFP em dupla precisao no Assembly
-- exibicao do padrao binario do resultado por meio dos LEDs
-
-Entretanto, ele nao implementa completamente toda a norma IEEE 754, pois:
-
-- nao trata explicitamente valores especiais
-- nao controla modo de arredondamento
-- mistura operacoes de ponto flutuante com conversoes para inteiro em // e %
-- restringe a operacao de potencia
-
-Assim, o projeto pode ser descrito como uma implementacao educacional de uma linguagem de expressoes com suporte parcial a aritmetica de ponto flutuante em dupla precisao.
-
-
-16. RESUMO FINAL
+14. RESUMO FINAL
 
 Este projeto:
-
 - le um arquivo com 10 expressoes em RPN
 - converte cada linha em tokens
 - executa semanticamente as expressoes
@@ -506,13 +474,3 @@ Este projeto:
 - permite reutilizar resultados anteriores
 - gera um arquivo Assembly ARMv7 com operacoes VFP
 - salva os resultados intermediarios e finais em arquivos
-
-Ele e util para estudo de:
-
-- analise lexica
-- execucao por pilha
-- memoria simbolica
-- historico de resultados
-- geracao de codigo
-- ponto flutuante em arquitetura ARMv7
-

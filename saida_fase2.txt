@@ -87,7 +87,7 @@
                 "valor": "//"
             }
         ],
-        "resultado": 546.0
+        "resultado": 547.0
     },
     {
         "linha": 6,

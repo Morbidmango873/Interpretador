@@ -2,6 +2,12 @@ import json
 
 #Nome do Grupo: Francisco Hauch Cardoso, ID: Morbidmango873
 
+LITERAIS_FLOAT_ESPECIAIS = {
+    "NAN": "nan",
+    "INF": "inf",
+    "INFINITY": "inf",
+}
+
 
 def valorSemantico(token):
     if token["tipo"] == "MEM":
@@ -190,6 +196,14 @@ def estadoMEM(linha, index, tokens, pilha, buffer):
 
     if index < len(linha) and linha[index].islower():
         raise ValueError(f"[pos {index}] Nome inválido {buffer!r} — letras minúsculas não permitidas")
+
+    if buffer in LITERAIS_FLOAT_ESPECIAIS:
+        return estadoFechaEspecial(
+            linha,
+            index,
+            tokens + [{"tipo": "NUM", "valor": LITERAIS_FLOAT_ESPECIAIS[buffer]}],
+            pilha
+        )
 
     return estadoFechaEspecial(linha, index, tokens + [{"tipo": "MEM", "nome": buffer, "valor": f"MEM({buffer})"}], pilha)
 

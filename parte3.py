@@ -1,4 +1,5 @@
 import json
+import math
 
 
 #Nome do Grupo: Francisco Hauch Cardoso, ID: Morbidmango873
@@ -7,6 +8,24 @@ import json
 
 MAX_EXPRESSOES = 10
 LED_BASE = 0xFF200000
+ROUNDING_MODE_IEEE = "nearest_even"
+FPSCR_RMODE_BITS = {
+    "nearest_even": 0x00000000,
+    "toward_positive": 0x00400000,
+    "toward_negative": 0x00800000,
+    "toward_zero": 0x00C00000,
+}
+
+
+def literal_double_asm(valor: float) -> str:
+    valor = float(valor)
+
+    if math.isnan(valor):
+        return "nan"
+    if math.isinf(valor):
+        return "-inf" if valor < 0 else "inf"
+
+    return repr(valor)
 
 
 # ESTRUTURAS PADRÃO DO ASSEMBLY
@@ -39,10 +58,12 @@ def estrutura_secao_data(constantes: list[tuple[str, float]],
 
     linhas.append("    @ --- Constantes numericas ---\n")
     linhas.append("    cst_zero_f64: .double 0.0\n")
+    linhas.append("    cst_max_s32_f64: .double 2147483647.0\n")
+    linhas.append("    cst_min_s32_f64: .double -2147483648.0\n")
 
     if constantes:
         for nome, valor in constantes:
-            linhas.append(f"    {nome}: .double {valor:.10f}\n")
+            linhas.append(f"    {nome}: .double {literal_double_asm(valor)}\n")
 
     if results:
         linhas.append("\n    @ --- Resultados ---\n")
@@ -66,13 +87,20 @@ def estrutura_bloco_dummy() -> str:
     )
 
 def estrutura_inicio_text() -> str:
+    bits_rmode = FPSCR_RMODE_BITS[ROUNDING_MODE_IEEE]
+    trecho_rmode = ""
+
+    if bits_rmode:
+        trecho_rmode = f"    ORR  r0, r0, #{bits_rmode:#010x}\n"
+
     return (
         f"\n.section .text\n"
         f".global _start\n\n"
         f"_start:\n"
-        f"    @ Habilita VFP/NEON\n"
+        f"    @ Configura FPSCR: preserva subnormais, NaN e modo de arredondamento IEEE\n"
         f"    VMRS r0, FPSCR\n"
-        f"    ORR  r0, r0, #0x00400000\n"
+        f"    BIC  r0, r0, #0x03C00000\n"
+        f"{trecho_rmode}"
         f"    VMSR FPSCR, r0\n\n"
     )
 
@@ -178,9 +206,69 @@ def estrutura_op_divisao(label: str, step: int) -> str:
         f"    @ DIVISAO (step {step})\n"
         f"    VPOP  {{d1}}            @ b (divisor)\n"
         f"    VPOP  {{d0}}            @ a (dividendo)\n"
-        f"    VDIV.F64 d0, d0, d1   @ d0 = a / b\n"
+        f"    VDIV.F64 d0, d0, d1   @ d0 = a / b (NaN/Inf/subnormais preservados pelo VFP)\n"
         f"    VPUSH {{d0}}\n"
     )
+
+
+def estrutura_arredondar_quociente(quociente: str,
+                                   destino_int: str,
+                                   destino_double: str,
+                                   label: str,
+                                   step: int) -> str:
+    lbl_fim = f"round_q_done_{label}_{step}_{destino_int.replace('s', '')}"
+
+    if ROUNDING_MODE_IEEE == "nearest_even":
+        return (
+            f"    VCVTR.S32.F64 {destino_int}, {quociente}\n"
+            f"    VCVT.F64.S32 {destino_double}, {destino_int}\n"
+        )
+
+    if ROUNDING_MODE_IEEE == "toward_zero":
+        return (
+            f"    VCVT.S32.F64 {destino_int}, {quociente}\n"
+            f"    VCVT.F64.S32 {destino_double}, {destino_int}\n"
+        )
+
+    if ROUNDING_MODE_IEEE == "toward_negative":
+        return (
+            f"    VCVT.S32.F64 {destino_int}, {quociente}\n"
+            f"    VCVT.F64.S32 {destino_double}, {destino_int}\n"
+            f"    VCMP.F64 {quociente}, {destino_double}\n"
+            f"    VMRS APSR_nzcv, FPSCR\n"
+            f"    BEQ  {lbl_fim}\n"
+            f"    LDR r0, =cst_zero_f64\n"
+            f"    VLDR d6, [r0]\n"
+            f"    VCMP.F64 {quociente}, d6\n"
+            f"    VMRS APSR_nzcv, FPSCR\n"
+            f"    BGE  {lbl_fim}\n"
+            f"    VMOV r1, {destino_int}\n"
+            f"    SUB  r1, r1, #1\n"
+            f"    VMOV {destino_int}, r1\n"
+            f"    VCVT.F64.S32 {destino_double}, {destino_int}\n"
+            f"{lbl_fim}:\n"
+        )
+
+    if ROUNDING_MODE_IEEE == "toward_positive":
+        return (
+            f"    VCVT.S32.F64 {destino_int}, {quociente}\n"
+            f"    VCVT.F64.S32 {destino_double}, {destino_int}\n"
+            f"    VCMP.F64 {quociente}, {destino_double}\n"
+            f"    VMRS APSR_nzcv, FPSCR\n"
+            f"    BEQ  {lbl_fim}\n"
+            f"    LDR r0, =cst_zero_f64\n"
+            f"    VLDR d6, [r0]\n"
+            f"    VCMP.F64 {quociente}, d6\n"
+            f"    VMRS APSR_nzcv, FPSCR\n"
+            f"    BLE  {lbl_fim}\n"
+            f"    VMOV r1, {destino_int}\n"
+            f"    ADD  r1, r1, #1\n"
+            f"    VMOV {destino_int}, r1\n"
+            f"    VCVT.F64.S32 {destino_double}, {destino_int}\n"
+            f"{lbl_fim}:\n"
+        )
+
+    raise ValueError(f"Modo de arredondamento nao suportado: {ROUNDING_MODE_IEEE}")
 
 def estrutura_op_divisao_inteira(label: str, step: int) -> str:
     """Divisão inteira: divide, converte para int (trunca) e volta para double."""
@@ -189,8 +277,7 @@ def estrutura_op_divisao_inteira(label: str, step: int) -> str:
         f"    VPOP  {{d1}}            @ b\n"
         f"    VPOP  {{d0}}            @ a\n"
         f"    VDIV.F64 d0, d0, d1   @ d0 = a / b\n"
-        f"    VCVT.S32.F64 s0, d0   @ trunca para inteiro\n"
-        f"    VCVT.F64.S32 d0, s0   @ volta para double\n"
+        f"{estrutura_arredondar_quociente('d0', 's0', 'd0', label, step)}"
         f"    VPUSH {{d0}}\n"
     )
 
@@ -201,9 +288,8 @@ def estrutura_op_resto(label: str, step: int) -> str:
         f"    VPOP  {{d1}}            @ b\n"
         f"    VPOP  {{d0}}            @ a\n"
         f"    VDIV.F64 d2, d0, d1   @ d2 = a / b\n"
-        f"    VCVT.S32.F64 s4, d2   @ trunca\n"
-        f"    VCVT.F64.S32 d2, s4   @ volta para double\n"
-        f"    VMUL.F64 d2, d2, d1   @ d2 = trunc(a/b) * b\n"
+        f"{estrutura_arredondar_quociente('d2', 's4', 'd2', label, step)}"
+        f"    VMUL.F64 d2, d2, d1   @ d2 = round(a/b) * b\n"
         f"    VSUB.F64 d0, d0, d2   @ d0 = a - d2\n"
         f"    VPUSH {{d0}}\n"
     )
