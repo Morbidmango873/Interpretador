@@ -4,6 +4,7 @@ import os
 from parte1 import parseExpressao
 from parte2 import executarExpressao
 from parte3 import gerarAssembly
+from validador_entrada import validar_arquivo_entrada
 # Nome do Grupo: Francisco Hauch Cardoso, ID: Morbidmango873
 
 # CONSTANTES
@@ -129,6 +130,15 @@ def main() -> None:
         sys.exit(1)
 
     caminho = sys.argv[1]
+
+    print("\n[Validação] Conferindo arquivo de entrada...")
+    try:
+        validar_arquivo_entrada(caminho, MIN_LINHAS, MAX_LINHAS)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Erro na validação: {e}")
+        sys.exit(1)
+
+    print("[Validação] Arquivo aprovado para processamento.")
 
     # --- fase 0: leitura e limpeza do arquivo de entrada ---
     print(f"\nLendo arquivo: '{caminho}'")
