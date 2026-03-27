@@ -1,6 +1,6 @@
 Método de uso - 
 
-Rodar o programa parte4.py entrada.txt ou entrada1.txt ou entrada2.txt
+Rodar o programa parte4.py teste.txt ou teste1.txt ou teste2.txt
 
 Todos os programas acima são os teste todos tendo todas as operações e com 10 linhas cada limite maximo do programa
 
