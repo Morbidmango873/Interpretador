@@ -1,3 +1,16 @@
+Método de uso - 
+
+Rodar o programa parte4.py entrada.txt ou entrada1.txt ou entrada2.txt
+
+Todos os programas acima são os teste todos tendo todas as operações e com 10 linhas cada limite maximo do programa
+
+Após isso termoe a saida_assembly.txt que é nosso código para colar no CPUlator - após colar basta ativar a opção de 32 leds e segurar F2 que ele printara todos os números nos 32 leds.
+
+
+
+
+
+
 PROJETO DE INTERPRETADORES
 Sistema de leitura, analise, execucao e geracao de Assembly ARMv7 para expressoes em notacao pos-fixa - Analisador Léxico seguindo modelo de Máquinas de Estado Finito
 
