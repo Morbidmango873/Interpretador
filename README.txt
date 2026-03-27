@@ -7,7 +7,7 @@ Todos os programas acima são os teste todos tendo todas as operações e com 10
 Após isso termoe a saida_assembly.txt que é nosso código para colar no CPUlator - após colar basta ativar a opção de 32 leds e segurar F2 que ele printara todos os números nos 32 leds.
 
 
-
+Dentro do diretorio também possui 3 validadores que iram verifica os arquivos durante a execução.
 
 
 
