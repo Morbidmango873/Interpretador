@@ -5,6 +5,8 @@ from parte1 import parseExpressao
 from parte2 import executarExpressao
 from parte3 import gerarAssembly
 from validador_entrada import validar_arquivo_entrada
+from validador_saida_fase1 import validar_saida_fase1
+from validador_parte2 import validar_resultados_parte2
 # Nome do Grupo: Francisco Hauch Cardoso, ID: Morbidmango873
 
 # CONSTANTES
@@ -40,10 +42,6 @@ def lerArquivo(caminho: str) -> list[str]:
         )
 
     if len(linhas_limpas) > MAX_LINHAS:
-        print(
-            f"Aviso: arquivo contém {len(linhas_limpas)} linhas; "
-            f"apenas as primeiras {MAX_LINHAS} serão processadas."
-        )
         linhas_limpas = linhas_limpas[:MAX_LINHAS]
 
     return linhas_limpas
@@ -100,24 +98,19 @@ def salvarResultados(resultados: list[dict], caminho: str = "saida_fase2.txt") -
     with open(caminho, "w", encoding="utf-8") as f:
         json.dump(resultados, f, indent=4, ensure_ascii=False)
 
-    print(f"Resultados salvos em '{caminho}'.")
-
 
 # CARREGAMENTO DO JSON DE TOKENS
 
 def lerJsonArquivo(caminho: str = "saida_fase1.txt") -> list | dict | None:
 
     if not os.path.isfile(caminho):
-        print(f"Erro: arquivo de tokens '{caminho}' não encontrado.")
         return None
 
     try:
         with open(caminho, "r", encoding="utf-8") as f:
             dados = json.load(f)
-        print(f"Tokens carregados de '{caminho}'.")
         return dados
-    except json.JSONDecodeError as e:
-        print(f"Erro ao decodificar JSON '{caminho}': {e}")
+    except json.JSONDecodeError:
         return None
 
 
@@ -131,61 +124,54 @@ def main() -> None:
 
     caminho = sys.argv[1]
 
-    print("\n[Validação] Conferindo arquivo de entrada...")
     try:
         validar_arquivo_entrada(caminho, MIN_LINHAS, MAX_LINHAS)
     except (FileNotFoundError, ValueError) as e:
-        print(f"Erro na validação: {e}")
+        print(e)
         sys.exit(1)
 
-    print("[Validação] Arquivo aprovado para processamento.")
-
-    # --- fase 0: leitura e limpeza do arquivo de entrada ---
-    print(f"\nLendo arquivo: '{caminho}'")
     try:
         linhas = lerArquivo(caminho)
     except (FileNotFoundError, ValueError) as e:
-        print(f"Erro na leitura: {e}")
+        print(e)
         sys.exit(1)
 
-    print(f"{len(linhas)} linha(s) carregada(s).")
-
-    # --- Parte 1: análise léxica (AFD) ---
-    print("\n[Parte 1] Análise léxica...")
     try:
         tokens_por_linha = parseExpressao(linhas)
     except Exception as e:
-        print(f"Erro na Parte 1: {e}")
+        print(e)
         sys.exit(1)
-
-    print("[Parte 1] Concluída. Tokens salvos em 'saida_fase1.txt'.")
-
-    print("\n[Parte 3] Gerando Assembly ARMv7...")
+    
+    try:
+        validar_saida_fase1("saida_fase1.txt", MIN_LINHAS)
+    except (FileNotFoundError, ValueError, json.JSONDecodeError) as e:
+        print(e)
+        sys.exit(1)
+    
     dados_tokens = lerJsonArquivo("saida_fase1.txt")
 
     if dados_tokens is None:
-        print("Erro: não foi possível carregar os tokens para geração do Assembly.")
+        print("Erro ao ler saida_fase1.txt.")
         sys.exit(1)
 
     try:
         gerarAssembly(dados_tokens)
     except Exception as e:
-        print(f"Erro na geração de Assembly: {e}")
+        print(e)
         sys.exit(1)
-
-    print("[Fase 1.5] Assembly salvo em 'assembly_saida.txt'.")
-
-    # --- fase 2: execução / simulação das expressões ---
-    print("\n[Fase 2] Executando expressões...")
+    
     try:
         resultados = executarExpressao(tokens_por_linha)
     except Exception as e:
-        print(f"Erro na Fase 2: {e}")
+        print(e)
+        sys.exit(1)
+    
+    try:
+        validar_resultados_parte2(resultados, MIN_LINHAS)
+    except ValueError as e:
+        print(e)
         sys.exit(1)
 
-    print("[Fase 2] Concluída.")
-
-    # --- fase 3: exibição e persistência dos resultados ---
     exibirResultados(resultados)
     salvarResultados(resultados)
 
